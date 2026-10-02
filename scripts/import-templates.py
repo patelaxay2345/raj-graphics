@@ -8,41 +8,50 @@ ROOT = os.path.join(os.path.dirname(__file__), '..', 'design')
 SRC = os.path.join(ROOT, 'content')
 OUT = os.path.join(ROOT, 'img', 't')
 
-# source category slug -> (site category slug, group title)
+# source category slug -> site category slug (one site category per Printers Club category)
 MAP = {
-    'visiting-card': ('visiting-cards', 'Visiting card designs'),
-    'die-cut-visiting-card': ('visiting-cards', 'Die-cut designs'),
-    'uv-texture': ('visiting-cards', 'UV texture designs'),
-    'letter-head': ('letter-heads', 'Letterhead designs'),
-    'envelope': ('envelopes', 'Envelope designs'),
-    'bill-book': ('bill-books', 'Bill book designs'),
-    'atm-pouch': ('bags', 'ATM pouch designs'),
-    'sticker': ('stickers', 'Sticker designs'),
-    'id-card': ('id-cards', 'ID card designs'),
-    'garments-tags': ('tags', 'Garment tag designs'),
-    'doctor-files': ('files', 'Doctor file designs'),
+    'visiting-card': 'visiting-cards',
+    'die-cut-visiting-card': 'die-cut-cards',
+    'letter-head': 'letter-heads',
+    'envelope': 'envelopes',
+    'bill-book': 'bill-books',
+    'atm-pouch': 'bags',
+    'doctor-files': 'files',
+    'uv-texture': 'uv-texture',
+    'garments-tags': 'tags',
+    'sticker': 'stickers',
+    'id-card': 'id-cards',
 }
+
+def thumb(src, dest):
+    os.makedirs(os.path.dirname(os.path.join(ROOT, dest)), exist_ok=True)
+    subprocess.run(['magick', src, '-colorspace', 'sRGB', '-strip', '-resize', '360x360>', '-quality', '74',
+                    os.path.join(ROOT, dest)], check=True)
 
 full = os.path.join(SRC, 'data-full.json')  # from crawl-templates.py, has every page
 data = json.load(open(full if os.path.exists(full) else os.path.join(SRC, 'data.json')))
-tpl = {}
+tpl, counts = {}, {}
 for c in data['categories']:
-    site, title = MAP[c['slug']]
-    designs = [(d['name'], d.get('local_image')) for d in c.get('designs', [])]
-    for s in c.get('subcategories', []):
-        designs += [(f"{s['name'].title()} · {d['name']}", d.get('local_image')) for d in s['designs']]
-    items = []
-    for name, rel in designs:
-        if not rel or not os.path.exists(os.path.join(SRC, rel)):
-            continue
-        dest = f"img/t/{site}/{c['slug']}-{len(items) + 1}.jpg"
-        os.makedirs(os.path.dirname(os.path.join(ROOT, dest)), exist_ok=True)
-        subprocess.run(['magick', os.path.join(SRC, rel), '-colorspace', 'sRGB', '-strip', '-resize', '360x360>',
-                        '-quality', '74', os.path.join(ROOT, dest)], check=True)
-        items.append([name, dest])
-    if items:
-        tpl.setdefault(site, []).append({'g': title, 'items': items})
+    site = MAP[c['slug']]
+    cover = next((f for f in os.listdir(os.path.join(SRC, 'images', c['slug'])) if f.startswith('_cover')), None)
+    if cover:
+        thumb(os.path.join(SRC, 'images', c['slug'], cover), f'img/cover/{site}.jpg')
+    lists = [(f"{c['name']} designs", c['designs'])] if 'designs' in c else [(s['name'].title(), s['designs']) for s in c['subcategories']]
+    n = 0
+    for title, designs in lists:
+        items = []
+        for d in designs:
+            rel = d.get('local_image')
+            if not rel or not os.path.exists(os.path.join(SRC, rel)):
+                continue
+            n += 1
+            dest = f"img/t/{site}/{n}.jpg"
+            thumb(os.path.join(SRC, rel), dest)
+            items.append([d['name'], dest])
+        if items:
+            tpl.setdefault(site, []).append({'g': title, 'items': items})
+    counts[site] = (n, c['count'])
 
 with open(os.path.join(ROOT, 'templates.js'), 'w') as f:
     f.write('const TPL = ' + json.dumps(tpl, ensure_ascii=False, separators=(',', ':')) + ';\n')
-print({k: sum(len(g['items']) for g in v) for k, v in tpl.items()})
+print(counts)
