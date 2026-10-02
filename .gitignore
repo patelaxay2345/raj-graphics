@@ -1,0 +1,12 @@
+.idea/
+*.iml
+node_modules/
+.next/
+.open-next/
+.wrangler/
+.env*
+!.env.example
+.DS_Store
+*.tsbuildinfo
+next-env.d.ts
+design/preview.html

@@ -1,0 +1,557 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Raj Graphics — The Perfection of Printing</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--pink:#e6157f;--navy:#2b2d8f;--navy-2:#16184d;--ink:#141632;--muted:#5b5f7a;--line:#e7e8f0;--bg:#f7f7fb;--wa:#25d366;--r:16px;--sh:0 1px 2px rgba(20,22,50,.06),0 12px 32px rgba(20,22,50,.08)}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:"Plus Jakarta Sans",system-ui,sans-serif;color:var(--ink);background:var(--bg);line-height:1.5;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+button,input,select,textarea{font:inherit}
+button{cursor:pointer;border:0;background:none}
+img{display:block;max-width:100%}
+.wrap{max-width:1600px;margin:0 auto;padding:0 32px}
+
+.strip{background:var(--navy-2);color:#c9cbf3;font-size:13px}
+.strip .wrap{display:flex;justify-content:space-between;gap:16px;padding-block:8px;flex-wrap:wrap}
+.strip b{color:#fff}
+
+header{position:sticky;top:0;z-index:30;background:rgba(255,255,255,.94);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.hd{display:flex;align-items:center;gap:24px;height:76px}
+.brand{display:flex;align-items:center;gap:10px;font-weight:800;font-size:20px;letter-spacing:-.02em}
+.brand img{width:56px;height:56px;object-fit:contain}
+.brand small{display:block;font-size:10.5px;font-weight:700;color:var(--pink);letter-spacing:.06em}
+.search{flex:1;max-width:380px;font-size:14px;display:flex;align-items:center;gap:8px;background:var(--bg);border:1px solid var(--line);border-radius:999px;padding:10px 16px;color:var(--muted)}
+.search input{border:0;outline:0;background:none;flex:1;color:var(--ink)}
+nav.main{display:flex;gap:2px;margin-left:auto}
+nav.main a{padding:8px 14px;border-radius:999px;font-weight:600;font-size:14px;color:var(--muted)}
+nav.main a:hover{background:#f1f1fb;color:var(--navy)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:11px 20px;border-radius:999px;font-weight:700;font-size:14px;transition:.15s;white-space:nowrap}
+.btn-p{background:linear-gradient(135deg,var(--pink),#b8116a);color:#fff;box-shadow:0 6px 16px rgba(230,21,127,.28)}
+.btn-p:hover{transform:translateY(-1px);box-shadow:0 10px 22px rgba(230,21,127,.36)}
+.btn-o{border:1.5px solid var(--line);background:#fff;color:var(--ink)}
+.btn-o:hover{border-color:var(--navy);color:var(--navy)}
+.btn-wa{background:var(--wa);color:#06381b}
+.btn-sm{padding:8px 14px;font-size:13px}
+
+/* hero */
+.hero{margin-top:16px;border-radius:28px;overflow:hidden;background:radial-gradient(600px 400px at 85% 30%,rgba(196,140,255,.35),transparent 70%),linear-gradient(110deg,#fdeef6 0%,#f8eefb 45%,#ece9fd 100%);display:grid;grid-template-columns:1.05fr 1fr;gap:16px;align-items:center;padding:36px 0 36px 44px}
+.pill{display:inline-flex;align-items:center;gap:8px;font-size:14px;font-weight:700;color:var(--pink);background:#fbe0ec;padding:7px 14px;border-radius:999px;margin-bottom:18px}
+.hero h1{font-size:clamp(34px,4.6vw,58px);line-height:1.08;letter-spacing:-.035em;font-weight:800;color:#0e1033}
+.hero h1 em{font-style:normal;background:linear-gradient(90deg,var(--pink),#7a1fd1 55%,var(--navy));-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero p{color:var(--muted);margin:18px 0 28px;max-width:560px;font-size:18px}
+.hero .ctas{display:flex;gap:16px;flex-wrap:wrap}
+.hero .btn{padding:15px 30px;font-size:16px}
+.hero .btn-o{border:1.5px solid #c9cbe8;background:#fff}
+.feats{display:grid;grid-template-columns:repeat(4,auto);gap:18px;margin-top:34px;justify-content:start}
+.feats div{display:flex;align-items:center;gap:9px;font-size:11.5px;color:var(--muted);white-space:nowrap}
+.feats b{display:block;font-size:13.5px;color:var(--ink)}
+.feats i{font-style:normal;width:40px;height:40px;border-radius:50%;display:grid;place-items:center;font-size:19px;flex:none}
+.hero-art{align-self:stretch;display:flex;align-items:center}
+.hero-art img{width:100%;height:auto;-webkit-mask-image:radial-gradient(ellipse 72% 70% at 52% 52%,#000 62%,transparent 100%);mask-image:radial-gradient(ellipse 72% 70% at 52% 52%,#000 62%,transparent 100%)}
+
+/* sections */
+.sec{margin:56px 0 20px;display:flex;align-items:end;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.sec h2{font-size:28px;letter-spacing:-.025em}
+.sec p{color:var(--muted);font-size:15px;margin-top:2px}
+
+.cats{display:grid;grid-template-columns:repeat(5,1fr);gap:20px}
+.cat{position:relative;border-radius:var(--r);overflow:hidden;background:#fff;border:1px solid var(--line);transition:.2s;display:flex;flex-direction:column;box-shadow:0 1px 3px rgba(20,22,50,.05)}
+.cat:hover{transform:translateY(-4px);box-shadow:var(--sh)}
+.cat .ph{aspect-ratio:257/114;overflow:hidden}
+.cat .ph img{width:100%;height:100%;object-fit:cover;transition:transform .5s}
+.cat:hover .ph img{transform:scale(1.06)}
+.cat .tag{position:absolute;top:10px;left:10px;z-index:1;background:#fff;font-size:11px;font-weight:800;padding:4px 10px;border-radius:999px;color:var(--pink);box-shadow:0 2px 6px rgba(0,0,0,.08)}
+.cat .bd{padding:14px 14px 16px 16px;min-width:0;display:grid;grid-template-columns:1fr auto;align-items:center;gap:2px 8px}
+.cat h3{font-size:15.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cat .meta{font-size:12.5px;color:var(--muted);display:flex;gap:10px;grid-column:1;white-space:nowrap}
+.cat .meta b{color:var(--pink)}
+.cat .go{grid-column:2;grid-row:1/3;width:38px;height:38px;border-radius:50%;border:1px solid var(--line);display:grid;place-items:center;font-weight:700;transition:.2s}
+.cat:hover .go{background:var(--pink);color:#fff;border-color:var(--pink)}
+
+.why{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.why div{background:#fff;border:1px solid var(--line);border-radius:var(--r);padding:20px}
+.why i{font-style:normal;font-size:22px;display:grid;place-items:center;width:44px;height:44px;border-radius:12px;background:#fdeaf4;margin-bottom:12px}
+.why b{display:block;margin-bottom:4px}
+.why span{font-size:14px;color:var(--muted)}
+
+.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;counter-reset:s}
+.steps div{position:relative;padding:20px 20px 20px 64px;background:#fff;border-radius:var(--r);border:1px solid var(--line);font-size:14px;color:var(--muted)}
+.steps div::before{counter-increment:s;content:counter(s);position:absolute;left:18px;top:18px;width:32px;height:32px;border-radius:50%;background:var(--navy);color:#fff;display:grid;place-items:center;font-weight:800}
+.steps b{display:block;color:var(--ink)}
+
+/* listing */
+.crumb{font-size:13px;color:var(--muted);margin-bottom:14px}
+.crumb a:hover{color:var(--pink)}
+.lhero{margin-top:16px;border-radius:28px;overflow:hidden;background:radial-gradient(600px 400px at 85% 30%,rgba(196,140,255,.32),transparent 70%),linear-gradient(110deg,#fdeef6 0%,#f8eefb 45%,#ece9fd 100%);display:grid;grid-template-columns:1.1fr 1fr;gap:24px;align-items:center;padding:30px 0 30px 44px}
+.lhero h1{font-size:clamp(32px,4vw,52px);line-height:1.08;letter-spacing:-.035em;color:#0e1033}
+.lhero h1 em{font-style:normal;background:linear-gradient(90deg,var(--pink),#7a1fd1 55%,var(--navy));-webkit-background-clip:text;background-clip:text;color:transparent}
+.lhero p{color:var(--muted);font-size:17px;margin:12px 0 22px;max-width:520px}
+.lhero .ctas{display:flex;gap:14px;flex-wrap:wrap}
+.lhero .art{height:280px;display:flex;align-items:center;justify-content:center;padding-right:32px}
+.lhero .art img{max-height:100%;width:100%;object-fit:cover;border-radius:22px;box-shadow:0 20px 50px rgba(43,45,143,.18)}
+.lhero .art img.m{object-fit:contain;box-shadow:none;-webkit-mask-image:radial-gradient(ellipse 75% 75% at 50% 50%,#000 60%,transparent 100%);mask-image:radial-gradient(ellipse 75% 75% at 50% 50%,#000 60%,transparent 100%)}
+.lhero .feats{margin-top:26px}
+.chips{position:sticky;top:76px;z-index:10;background:rgba(247,247,251,.92);backdrop-filter:blur(8px);padding:14px 0;margin-top:20px;display:flex;gap:10px;overflow-x:auto;scrollbar-width:none}
+.chip{white-space:nowrap;padding:9px 18px;border-radius:999px;border:1px solid var(--line);background:#fff;font-weight:600;font-size:14px;color:var(--muted)}
+.chip:hover{color:var(--pink);border-color:#f5b6d5}
+.chip.on{background:linear-gradient(135deg,var(--pink),#b8116a);color:#fff;border-color:transparent;box-shadow:0 6px 16px rgba(230,21,127,.25)}
+.grp{margin-top:30px;scroll-margin-top:150px}
+.grp-h{display:flex;align-items:end;justify-content:space-between;gap:12px;margin-bottom:18px;flex-wrap:wrap}
+.grp-h h2{font-size:26px;letter-spacing:-.025em}
+.grp-h p{color:var(--muted);font-size:14px}
+.grp-h .qty{font-size:12.5px;font-weight:700;padding:6px 14px;border-radius:999px;background:#fbe0ec;color:var(--pink)}
+.prods{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:20px}
+.prod{background:#fff;border:1px solid var(--line);border-radius:18px;overflow:hidden;display:flex;flex-direction:column;transition:.2s;box-shadow:0 1px 3px rgba(20,22,50,.05)}
+.prod:hover{box-shadow:var(--sh);transform:translateY(-4px)}
+.prod .media{position:relative;aspect-ratio:16/10;overflow:hidden}
+.prod .media img{width:100%;height:100%;object-fit:cover;transition:transform .5s}
+.prod:hover .media img{transform:scale(1.05)}
+.prod .tile{display:grid;place-items:center;text-align:center;padding:16px;height:100%}
+.prod .tile .card3d{width:62%;aspect-ratio:1.75;border-radius:10px;display:grid;place-items:center;color:#fff;box-shadow:0 18px 30px rgba(20,22,50,.22);transform:rotate(-6deg);transition:transform .4s;padding:10px}
+.prod:hover .tile .card3d{transform:rotate(0) scale(1.04)}
+.prod .tile strong{font-size:15px;line-height:1.15;font-weight:800;text-transform:uppercase}
+.prod .tile small{display:block;font-size:10px;font-weight:700;margin-top:4px;opacity:.9;letter-spacing:.04em}
+.ribbon{position:absolute;top:12px;right:12px;background:var(--pink);color:#fff;font-size:11px;font-weight:800;padding:4px 10px;border-radius:999px;z-index:2}
+.badge{position:absolute;left:12px;top:12px;z-index:2;background:#fff;font-size:11px;font-weight:800;padding:4px 10px;border-radius:999px;color:var(--navy);box-shadow:0 2px 6px rgba(0,0,0,.08)}
+.prod .bd{padding:16px 18px 18px;display:flex;flex-direction:column;gap:6px;flex:1}
+.prod h3{font-size:16.5px}
+.prod .code{font-size:11.5px;color:var(--pink);font-weight:800;letter-spacing:.04em}
+.prod .feat{font-size:14px;color:var(--muted)}
+.opts{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}
+.opts span{font-size:11.5px;font-weight:700;padding:4px 10px;border-radius:999px;background:#f3effd;color:#5b35b5}
+.prod .row{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:auto;padding-top:14px}
+.time{font-size:12.5px;font-weight:600;color:var(--muted)}
+.enq{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:999px;border:1.5px solid #f5b6d5;color:var(--pink);font-weight:700;font-size:13px;transition:.2s}
+.prod:hover .enq,.enq:hover{background:var(--pink);color:#fff;border-color:var(--pink)}
+
+.wallet{display:flex;align-items:center;gap:8px;border:1px solid var(--line);border-radius:999px;padding:6px 16px 6px 8px;font-size:11px;color:var(--muted);line-height:1.2}
+.wallet i{font-style:normal;width:32px;height:32px;border-radius:50%;background:var(--bg);display:grid;place-items:center}
+.wallet b{display:block;color:#16a34a;font-size:13px}
+.cat .ph.c0{background:#fde8f1}.cat .ph.c1{background:#fdf2dc}.cat .ph.c2{background:#e2f6ee}.cat .ph.c3{background:#e6effd}.cat .ph.c4{background:#efeafd}
+
+/* home sections */
+.band{background:linear-gradient(180deg,#f6f3fd,#fbf6fb);border-radius:28px;padding:28px 32px 32px;margin-top:40px}
+.band .sec{margin-top:0}
+.why4{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
+.why4 div{display:flex;gap:16px;align-items:center;background:#fff;border-radius:var(--r);padding:22px;box-shadow:0 1px 3px rgba(20,22,50,.05)}
+.why4 i,.flow i{font-style:normal;flex:none;width:60px;height:60px;border-radius:50%;display:grid;place-items:center;font-size:26px}
+.why4 b{display:block;font-size:15px;margin-bottom:4px}
+.why4 span{font-size:13.5px;color:var(--muted)}
+.flow{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;text-align:center}
+.flow>div{position:relative;font-size:13.5px;color:var(--muted);padding:0 10px}
+.flow>div:not(:last-child)::after{content:"→";position:absolute;right:-14px;top:22px;font-size:22px;color:#c3c5dc}
+.flow i{width:72px;height:72px;font-size:30px;margin:0 auto 14px}
+.flow b{display:block;color:var(--ink);font-size:15px;margin-bottom:4px}
+.custom{margin-top:44px;border-radius:28px;background:linear-gradient(110deg,#fdeef6,#f6edfb 55%,#fbe9f3);display:grid;grid-template-columns:1fr 1.3fr .9fr;align-items:center;gap:24px;padding:24px 40px;overflow:hidden}
+.custom h2{font-size:clamp(28px,3vw,42px);line-height:1.08;letter-spacing:-.03em;color:#0e1033}
+.custom h2 em{font-style:normal;color:var(--pink)}
+.custom p{color:var(--muted);margin:14px 0 22px;font-size:16px}
+.custom img{width:100%;max-height:300px;object-fit:contain;-webkit-mask-image:radial-gradient(ellipse 75% 75% at 50% 50%,#000 60%,transparent 100%);mask-image:radial-gradient(ellipse 75% 75% at 50% 50%,#000 60%,transparent 100%)}
+.checks{list-style:none;background:rgba(255,255,255,.75);border-radius:20px;padding:22px 24px;display:grid;gap:16px;font-size:14.5px;color:var(--muted)}
+.checks li::before{content:"✓";display:inline-grid;place-items:center;width:22px;height:22px;border-radius:50%;background:#fbd6e8;color:var(--pink);font-weight:800;font-size:12px;margin-right:10px}
+.reviews{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.rv{background:#fff;border-radius:var(--r);padding:24px;box-shadow:0 1px 3px rgba(20,22,50,.05)}
+.rv q{display:block;color:var(--muted);font-size:15px;quotes:none}
+.rv q::before{content:"❝";display:block;font-size:28px;color:#d0d2e4;line-height:1;margin-bottom:6px}
+.stars{color:#f5b301;letter-spacing:3px;margin:12px 0 16px}
+.who{display:flex;gap:12px;align-items:center;font-size:13px;color:var(--muted)}
+.who i{font-style:normal;width:44px;height:44px;border-radius:50%;display:grid;place-items:center;font-weight:800;color:#fff;background:linear-gradient(135deg,var(--pink),var(--navy))}
+.who b{display:block;color:var(--ink);font-size:14.5px}
+.arrows{display:flex;gap:10px}
+.arrows button{width:42px;height:42px;border-radius:50%;background:#fff;border:1px solid var(--line);font-size:18px}
+.news{margin-top:44px;border-radius:24px;background:linear-gradient(100deg,#1f2280,#3a1f8f 60%,#7a1f9a);color:#fff;display:flex;align-items:center;justify-content:space-between;gap:24px;padding:30px 44px;flex-wrap:wrap}
+.news h3{font-size:24px;letter-spacing:-.02em}
+.news p{color:#cfd0f5;font-size:14px}
+.news form{display:flex;background:#fff;border-radius:999px;padding:5px;flex:0 1 520px;gap:0}
+.news input{flex:1;border:0;outline:0;padding:0 18px;border-radius:999px;color:var(--ink);min-width:0}
+.news .ok{grid-column:auto;position:absolute;margin-top:64px;padding:6px 12px}
+
+/* contact */
+.contact{display:grid;grid-template-columns:1fr 1.2fr;gap:32px;background:linear-gradient(110deg,#fdeef6,#f6edfb 55%,#ece9fd);border-radius:28px;padding:40px 44px;margin-top:48px}
+.contact form{background:#fff;border-radius:20px;padding:24px;box-shadow:0 1px 3px rgba(20,22,50,.05)}
+.contact li{display:flex;gap:12px;align-items:center}
+.contact li i{font-style:normal;width:44px;height:44px;border-radius:50%;background:#fff;display:grid;place-items:center;flex:none}
+.contact h2{font-size:clamp(28px,3vw,40px);letter-spacing:-.03em;line-height:1.1;color:#0e1033}
+.contact h2 em{font-style:normal;color:var(--pink)}
+.contact ul{list-style:none;margin-top:18px;display:grid;gap:12px;color:var(--muted)}
+.contact li b{color:var(--ink);display:block}
+form{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+form .full{grid-column:1/-1}
+label.f{display:grid;gap:6px;font-size:13px;font-weight:600}
+label.f input,label.f select,label.f textarea{border:1px solid var(--line);border-radius:12px;padding:11px 14px;background:var(--bg);outline:0;color:var(--ink)}
+label.f input:focus,label.f select:focus,label.f textarea:focus{border-color:var(--navy);background:#fff}
+.ok{display:none;grid-column:1/-1;background:#e7f6ee;color:#0b7a43;padding:12px 14px;border-radius:12px;font-weight:600;font-size:14px}
+
+/* modal */
+dialog{margin:auto;border:0;border-radius:24px;padding:0;max-width:560px;width:calc(100% - 32px);box-shadow:0 30px 80px rgba(0,0,0,.35)}
+dialog::backdrop{background:rgba(20,22,50,.55);backdrop-filter:blur(3px)}
+.mh{display:flex;gap:14px;align-items:center;padding:18px 20px;background:linear-gradient(110deg,#fdeef6,#ece9fd)}
+.mh img{width:64px;height:48px;object-fit:cover;border-radius:10px}
+.mh b{display:block}
+.mh span{font-size:13px;color:var(--muted)}
+.mh .x{margin-left:auto;font-size:22px;color:var(--muted);width:36px;height:36px;border-radius:50%}
+.mh .x:hover{background:var(--bg)}
+dialog form{padding:20px}
+.acts{display:flex;gap:10px;grid-column:1/-1;margin-top:4px}
+.acts .btn{flex:1}
+
+.fab{position:fixed;right:20px;bottom:20px;z-index:40;width:56px;height:56px;border-radius:50%;background:var(--wa);display:grid;place-items:center;box-shadow:0 10px 24px rgba(37,211,102,.45)}
+.fab svg{width:28px;height:28px;fill:#fff}
+
+footer{background:#fff;color:var(--muted);margin-top:32px;padding:40px 0 24px;font-size:14px;border-top:1px solid var(--line)}
+.ft{display:grid;grid-template-columns:1.6fr 1fr 1fr 1.3fr;gap:32px}
+footer h4{color:var(--ink);margin-bottom:12px;font-size:15px}
+footer li{list-style:none;margin:8px 0}
+footer a:hover{color:var(--pink)}
+footer .brand{margin-bottom:12px;color:var(--ink)}
+.soc{display:flex;gap:10px;margin-top:16px}
+.soc a{width:34px;height:34px;border-radius:8px;display:grid;place-items:center;color:#fff;font-weight:800;font-size:13px}
+.copy{border-top:1px solid var(--line);margin-top:28px;padding-top:18px;font-size:13px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
+
+@media (max-width:960px){
+  nav.main{display:none}
+  .hero{grid-template-columns:1fr;padding:28px 22px}
+  .why,.steps,.feats{grid-template-columns:1fr 1fr}
+  .contact{grid-template-columns:1fr}
+  .ft,.why4,.reviews{grid-template-columns:1fr 1fr}
+  .cats{grid-template-columns:repeat(3,1fr)}
+  .flow{grid-template-columns:repeat(3,1fr);row-gap:28px}
+  .flow>div::after{display:none}
+  .custom,.lhero{grid-template-columns:1fr;padding:28px 24px}
+  .lhero .art{height:220px;padding:0}
+  .wallet{display:none}
+}
+@media (max-width:640px){
+  .search,.hd>.btn-o{display:none}
+  .hd{gap:12px;justify-content:space-between}
+  .cats{grid-template-columns:1fr 1fr;gap:12px}
+  .cat .meta{flex-direction:column;gap:0}
+  .cat .go{display:none}
+  .cat h3{font-size:14.5px}
+  .why,.steps,form,.ft,.why4,.reviews{grid-template-columns:1fr}
+  .flow{grid-template-columns:1fr 1fr}
+  .cats{grid-template-columns:1fr 1fr}
+  .wrap{padding:0 16px}
+  .band,.news{padding:24px 18px}
+  .arrows{display:none!important}
+  .strip .r{display:none}
+  .contact{padding:22px}
+  .contact{padding:24px 18px}
+  .contact form{padding:18px}
+}
+</style>
+</head>
+<body>
+
+
+
+<header><div class="wrap hd">
+  <a href="#/" class="brand"><img src="img/logo.png" alt="Raj Graphics"><span>Raj Graphics<small>THE PERFECTION OF PRINTING</small></span></a>
+  <label class="search">🔍<input id="q" placeholder="Search visiting cards, envelopes, stickers…"></label>
+  <nav class="main"><a href="#/" data-go="products">Products</a><a href="#/" data-go="why">About Us</a><a href="#" data-track>Track Order</a><a href="#/" data-go="contact">Support</a></nav>
+  <a class="wallet" href="#" data-wa><i>💬</i><span>WhatsApp<b>Chat now</b></span></a>
+  <button class="btn btn-p" data-enq="">＋ Get a Quote</button>
+</div></header>
+
+<main class="wrap" id="app"></main>
+
+<footer><div class="wrap">
+  <div class="ft">
+    <div><a href="#/" class="brand"><img src="img/logo.png" alt=""><span>Raj Graphics<small>THE PERFECTION OF PRINTING</small></span></a>
+      <p>Your trusted printing partner for high-quality printing solutions at the best prices. Serving businesses across India.</p>
+      <div class="soc"><a href="#" style="background:#1877f2">f</a><a href="#" style="background:linear-gradient(45deg,#f9a825,#e1306c,#833ab4)">◎</a><a href="#" style="background:#ff0000">▶</a><a href="#" style="background:#0a66c2">in</a></div></div>
+    <div><h4>Quick Links</h4><ul><li><a href="#/" data-go="products">Products</a></li><li><a href="#" data-track>Track Order</a></li><li><a href="#/" data-go="why">About Us</a></li><li><a href="#" data-enq="">Contact Us</a></li></ul></div>
+    <div><h4>Customer Support</h4><ul><li><a href="#" data-wa>FAQs</a></li><li><a href="#" data-wa>Shipping &amp; Delivery</a></li><li><a href="#" data-wa>Return Policy</a></li><li><a href="#">Terms &amp; Conditions</a></li><li><a href="#">Privacy Policy</a></li></ul></div>
+    <div><h4>Contact Us</h4><ul><li>📞 +91 98XXX XXXXX</li><li>✉ hello@rajgraphics.in</li><li>📍 City, State, India</li><li>🕘 Mon – Sat: 10:00 AM – 8:00 PM</li></ul></div>
+  </div>
+  <div class="copy"><span>© 2026 Raj Graphics. All rights reserved.</span><span>Designed for Raj Graphics</span></div>
+</div></footer>
+
+<a class="fab" href="#" data-wa aria-label="Chat on WhatsApp"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm5.3 14.2c-.2.6-1.3 1.2-1.8 1.2-.5.1-1 .2-3.3-.7-2.8-1.1-4.6-4-4.7-4.2-.1-.2-1.1-1.5-1.1-2.9 0-1.4.7-2 1-2.3.3-.3.6-.3.8-.3h.6c.2 0 .4 0 .6.5l.9 2.1c.1.2.1.4 0 .5l-.3.5-.4.4c-.1.1-.3.3-.1.6.2.3.8 1.3 1.7 2.1 1.2 1 2.1 1.3 2.4 1.5.3.1.5.1.6-.1l.9-1c.2-.3.4-.2.6-.1l2 1c.3.1.5.2.5.3.1.1.1.7-.1 1.3z"/></svg></a>
+
+<dialog id="dlg">
+  <div class="mh"><img id="dimg" alt=""><div><b id="dtitle">Get a quote</b><span>We reply within 30 minutes in working hours</span></div><button class="x" data-close aria-label="Close">×</button></div>
+  <form id="dform"></form>
+</dialog>
+
+<script>
+const WA = '919800000000';
+const img = n => `img/${n}.jpg`;
+
+const CATS = [
+  {slug:'visiting-cards',m:'m-visiting',name:'Visiting Cards',img:'visiting',days:'1–3 days',tag:'Most popular'},
+  {slug:'letter-heads',m:'m-letter',name:'Letter Heads',img:'letter',days:'1–3 days'},
+  {slug:'envelopes',m:'m-env',name:'Envelopes',img:'env',days:'3 days'},
+  {slug:'pamphlets',m:'m-poster',name:'Pamphlet / Posters',img:'poster',days:'2 days'},
+  {slug:'stickers',name:'Stickers & Labels',img:'sticker',days:'2 days'},
+  {slug:'tags',m:'m-tags',name:'Tags',img:'tags',days:'3 days'},
+  {slug:'files',m:'m-folder',name:'Files',img:'folder',days:'4 days'},
+  {slug:'bill-books',m:'m-bill',name:'Bill Books',img:'bill',days:'3 days'},
+  {slug:'bags',m:'m-pouch',name:'ATM Pouches',img:'pouch',days:'5 days',tag:'New'},
+  {slug:'card-holders',m:'m-holder',name:'Card Holders',img:'holder',days:'3 days'},
+  {slug:'pens',name:'Branded Pens',img:'pen',days:'5 days'},
+  {slug:'digital',m:'m-digital',name:'Digital Paper Printing',img:'digital',days:'Same day',tag:'Fast'},
+  {slug:'offset',name:'Offset Printing',img:'offset',days:'2–7 days'},
+  {slug:'targets',name:'Shooting Targets',img:'target',days:'3 days'}
+];
+
+const VC = [
+  {title:'Premium & modern finishes',qty:'Min. 100 cards',c:['#e6157f','#2b2d8f'],items:[
+    {t:'Velvet Touch',img:'v-velvet',f:'Soft-touch suede feel, 500 GSM',o:['Foil','Spot UV','Die-cut'],d:'3 days',n:1},
+    {t:'Gold & Rose Foil',img:'v-foil',f:'Hot-foil stamping on dark or textured stock',o:['Gold','Silver','Rose gold'],d:'3 days'},
+    {t:'Raised Spot UV',img:'v-spotuv',f:'3D gloss highlights on matt base',o:['MGI 3D','Flat UV'],d:'2 days',n:1},
+    {t:'Metal Cards',img:'v-metal',f:'Laser-etched steel or brass',o:['Black','Gold','Silver'],d:'7 days'},
+    {t:'Letterpress',img:'v-letterpress',f:'Deep deboss on 600 GSM cotton board',o:['1–2 colour','Edge paint'],d:'5 days'},
+    {t:'Eco Kraft',img:'v-kraft',f:'Recycled kraft with white or foil print',o:['Rounded','Square'],d:'3 days'},
+    {t:'NFC Smart Card',img:'v-nfc',f:'Tap-to-share contact, PVC with chip',o:['Matt PVC','Metal'],d:'5 days',n:1},
+    {t:'Minimal Matt',img:'v-matt',f:'Clean 400 GSM matt lamination',o:['Rounded corners','Duplex'],d:'2 days'}]},
+  {title:'500 GSM Cards',qty:'Qty. 500',c:['#f59e0b','#ea580c'],items:[
+    {t:'500 GSM + Velvet',code:'7',f:'Foil, Spot UV & Die-Cut available',d:'3 days'},
+    {t:'500 GSM + Matt',code:'8',f:'Foil, Spot UV & Die-Cut available',d:'3 days'},
+    {t:'500 GSM + Velvet',sub:'Digital + MGI',code:'7-MGI',f:'MGI Spot UV + Foil & Die-Cut',d:'2 days',n:1},
+    {t:'500 GSM + Matt',sub:'Digital + MGI',code:'8-MGI',f:'MGI Spot UV + Foil & Die-Cut',d:'2 days',n:1}]},
+  {title:'350–400 GSM Cards',qty:'Qty. 1000',c:['#3730a3','#0369a1'],items:[
+    {t:'400 GSM Matt + UV',code:'14',f:'Spot UV available',d:'2 days'},
+    {t:'350 GSM Matt',code:'15',f:'Premium thermal matt lamination',d:'2 days'},
+    {t:'350 GSM Matt + Texture',code:'16',f:'8 texture options',d:'3 days'}]},
+  {title:'Regular Visiting Cards',qty:'Qty. 1000',c:['#e6157f','#9d174d'],items:[
+    {t:'Gloss Lamination',code:'18',f:'Premium thermal gloss lamination',d:'1 day'},
+    {t:'Gloss UV Coated',code:'19',f:'Gloss UV coating',d:'12 hours'},
+    {t:'Without Lamination',code:'20',f:'Plain card, budget friendly',d:'2 days'},
+    {t:'Gloss + Texture',code:'17',f:'Gloss UV · 8 texture options',d:'3 days'}]},
+  {title:'NT / PVC Cards',qty:'Qty. 100 – 1000',c:['#16a34a','#166534'],items:[
+    {t:'NT Card',code:'30',f:'Non-tearable, waterproof',d:'3 days'},
+    {t:'Transparent PVC',code:'31',f:'Frosted or clear PVC',d:'4 days',n:1}]}
+];
+
+const V = {
+  'letter-heads':[['Classic Letterhead','100 GSM bond, single/double side'],['Premium Textured','Laid / linen finish 120 GSM'],['With Matching Envelope','Complete stationery kit'],['Wedding Stationery','Invites, menus & place cards','v-wedding']],
+  'envelopes':[['Cloth-lined','Strong courier envelopes'],['Window Envelope','DL / 10×4.5 with window'],['Kraft Envelope','Eco brown, custom print','v-stationery'],['Invitation Envelope','Pearl & metallic sheets']],
+  'pamphlets':[['A4 / A5 Flyers','130–170 GSM art paper'],['Tri-fold Brochure','Glossy / matt lamination'],['Posters','A3 to A0, indoor & outdoor'],['Menu Cards','Laminated, wipe-clean']],
+  'stickers':[['Die-cut Stickers','Any shape, vinyl or paper'],['Roll Labels','For bottles & packaging'],['Transparent Stickers','Clear vinyl, white ink'],['QR / Barcode Labels','Serial numbered']],
+  'tags':[['Garment Tags','350 GSM with string'],['Kraft Tags','Eco, foil or 1-colour'],['Price Tags','Perforated, numbered'],['Gift Tags','Die-cut, ribbon hole']],
+  'files':[['Presentation Folder','Pocket + card slot'],['Hospital / Lab File','Printed with flap'],['Certificate Folder','Foil + emboss'],['Document Envelopes','A4 / FS size']],
+  'bill-books':[['GST Invoice Book','Duplicate / triplicate'],['Carbonless NCR','2–4 part sets, numbered'],['Receipt Book','Pocket size'],['Challan Book','Custom fields']],
+  'bags':[['Kraft Paper Bags','Twisted handle'],['White Shopping Bags','Matt lamination'],['ATM / Card Pouches','Printed sleeves'],['Gift Pouches','Window & foil options']],
+  'card-holders':[['Leather Holder','Debossed logo'],['Metal Card Case','Laser engraved'],['Desk Card Stand','Acrylic / wood'],['Corporate Gift Set','Pen + holder combo']],
+  'pens':[['Plastic Ball Pens','Bulk, 1-colour print'],['Metal Pens','Laser engraved'],['Eco Pens','Bamboo / paper'],['Gift Pen Sets','Boxed with logo']],
+  'digital':[['Same-day Prints','A4 / A3 colour'],['Short-run Booklets','Saddle-stitch'],['Certificates','Variable names'],['Photo Prints','Glossy / matt']],
+  'offset':[['Bulk Brochures','5,000+ copies'],['Magazines & Catalogues','Perfect bound'],['Packaging Boxes','Mono carton'],['Custom Job','Share your spec']],
+  'targets':[['10m Air Rifle','ISSF size'],['Pistol Targets','25m / 50m'],['Practice Sheets','Bulk packs'],['Custom Target','Your layout']]
+};
+const PASTEL = ['#fde8f1','#fdf2dc','#e2f6ee','#e6effd','#efeafd'];
+const OPTC = [['#f59e0b','#ea580c'],['#3730a3','#0369a1'],['#e6157f','#9d174d'],['#16a34a','#166534']];
+
+const $ = s => document.querySelector(s);
+const grad = g => `background:linear-gradient(135deg,${g[0]},${g[1]})`;
+const waLink = t => `https://wa.me/${WA}?text=${encodeURIComponent(t || 'Hi Raj Graphics, I need a printing quote.')}`;
+
+const HOME = ['visiting-cards','card-holders','pamphlets','tags','files','letter-heads','envelopes','digital','bags','bill-books'];
+const BEST = [['Visiting Cards','m-visiting'],['Flex Banners','m-flex'],['Stickers','m-stickers'],['ID Cards','m-idcard'],['Brochures','m-brochure']];
+// Placeholder testimonials — replace with real customer reviews before launch.
+const REVIEWS = [['Excellent quality and super fast delivery. Our visiting cards came out perfect!','Amit Shah','Small Business Owner'],['Very professional service. Printing quality is top-notch and prices are very reasonable.','Priya Patel','Event Manager'],['I have been using Raj Graphics for all our office printing needs. Highly recommended!','Rohit Mehta','Corporate Client']];
+
+function home(q){
+  if (q) {
+    const list = CATS.filter(c => c.name.toLowerCase().includes(q));
+    return `<div class="sec"><div><h2>Results for “${q}”</h2></div></div><div class="cats">${catCards(list) || '<p>No match. <a class="lnk" href="#" data-enq="">Ask us →</a></p>'}</div>`;
+  }
+  return `
+  <section class="hero">
+    <div>
+      <span class="pill">👑 Trusted by 45,000+ Customers</span>
+      <h1>High-Quality Printing<br><em>for Every Business</em></h1>
+      <p>Premium printing at affordable prices. Share your design, get a quick quote and doorstep delivery – all in one place.</p>
+      <div class="ctas"><button class="btn btn-p" data-enq="">Get a Quote →</button><a class="btn btn-o" href="#" data-wa>💬 Chat on WhatsApp</a></div>
+      <div class="feats">
+        <div><i style="background:#ece6ff">⚡</i><span><b>12 Hours</b>Fastest Turnaround</span></div>
+        <div><i style="background:#e3f6ea">🛡️</i><span><b>Premium Quality</b>Professional Printing</span></div>
+        <div><i style="background:#e4ecfd">🚚</i><span><b>Pan India</b>Safe Delivery</span></div>
+        <div><i style="background:#fde7e2">👥</i><span><b>45,000+</b>Happy Customers</span></div>
+      </div>
+    </div>
+    <div class="hero-art"><img src="${img('m-hero')}" alt="Raj Graphics printed products"></div>
+  </section>
+
+  <div class="sec" id="products"><div><h2>Shop by Category</h2><p>Choose from a wide range of printing products. Great quality, best prices and fast delivery.</p></div><a class="btn btn-o" href="#/c/visiting-cards">View All Products →</a></div>
+  <div class="cats">${catCards(HOME.map(s => CATS.find(c => c.slug === s)))}</div>
+
+  <section class="band" id="why">
+    <div class="sec"><div><h2>Why Choose Raj Graphics?</h2><p>We make printing simple, fast and hassle-free for businesses of all sizes.</p></div></div>
+    <div class="why4">
+      <div><i style="background:#fde8f1">🛍️</i><span><b>Best Prices</b>High-quality printing at competitive rates</span></div>
+      <div><i style="background:#e6effd">⚡</i><span><b>Fast Turnaround</b>Get your orders ready in 12 hours</span></div>
+      <div><i style="background:#e2f6ee">🛡️</i><span><b>Premium Quality</b>State-of-the-art printing machines for perfect results</span></div>
+      <div><i style="background:#fdeee2">🚚</i><span><b>Pan India Delivery</b>Safe and reliable delivery to your doorstep</span></div>
+    </div>
+  </section>
+
+  <div class="sec" id="how"><div><h2>How It Works</h2><p>Getting your prints is quick and easy.</p></div></div>
+  <div class="flow">
+    <div><i style="background:#fde8f1">🛒</i><b>1. Choose Product</b>Select from our wide range of printing products</div>
+    <div><i style="background:#efeafd">☁️</i><b>2. Share Design</b>Send your artwork or use our design help</div>
+    <div><i style="background:#e2f6ee">🧾</i><b>3. Get Your Quote</b>We share price and delivery time on enquiry</div>
+    <div><i style="background:#e6effd">💬</i><b>4. Confirm Enquiry</b>Approve the proof on call or WhatsApp</div>
+    <div><i style="background:#fde8ec">🚚</i><b>5. Receive Prints</b>High-quality prints delivered to your doorstep</div>
+  </div>
+
+  <section class="custom">
+    <div><h2>Custom Printing<br><em>for Your Brand</em></h2><p>Make a lasting impression with professional printing solutions.</p><button class="btn btn-p" data-enq="Custom printing">Start Customized Enquiry →</button></div>
+    <img src="${img('m-custom')}" alt="Custom branded bag, cup, box and notebook">
+    <ul class="checks"><li>Custom Sizes &amp; Shapes</li><li>Multiple Paper Options</li><li>Bulk Order Discounts</li><li>Design Support Available</li></ul>
+  </section>
+
+  <div class="sec"><div><h2>Best Selling Products</h2><p>Most popular products loved by our customers.</p></div><a class="btn btn-o" href="#/c/visiting-cards">View All Best Sellers →</a></div>
+  <div class="cats">${BEST.map(([n,m],i) => `
+    <a class="cat" href="#" data-enq="${n}" data-img="${m}">
+      <div class="ph c${i % 5}"><img loading="lazy" src="${img(m)}" alt="${n}"></div>
+      <div class="bd"><h3>${n}</h3><span class="go">→</span><div class="meta"><b>Get a quote</b></div></div>
+    </a>`).join('')}</div>
+
+  <section class="band">
+    <div class="sec" style="justify-content:center;text-align:center;position:relative"><div><h2>What Our Customers Say</h2><p>Trusted by 45,000+ businesses across India.</p></div><div class="arrows" style="position:absolute;right:0;top:8px"><button aria-label="Previous">‹</button><button aria-label="Next">›</button></div></div>
+    <div class="reviews">${REVIEWS.map(([t,n,r]) => `<div class="rv"><q>${t}</q><div class="stars">★★★★★</div><div class="who"><i>${n.split(' ').map(w => w[0]).join('')}</i><span><b>${n}</b>${r}</span></div></div>`).join('')}</div>
+  </section>
+
+  <section class="news">
+    <div><h3>Get Updates on Offers &amp; New Products</h3><p>Subscribe to get the latest offers, printing tips and new product updates.</p></div>
+    <form><input type="email" required placeholder="Enter your email address"><button class="btn btn-p" type="submit">Subscribe →</button><div class="ok">✓ Subscribed!</div></form>
+  </section>`;
+}
+
+const catCards = list => list.map((c, i) => `
+  <a class="cat" href="#/c/${c.slug}">
+    ${c.tag ? `<span class="tag">${c.tag}</span>` : ''}
+    <div class="ph c${i % 5}"><img loading="lazy" src="${img(c.m || c.img)}" alt="${c.name}"></div>
+    <div class="bd"><h3>${c.name}</h3><span class="go">→</span><div class="meta"><span>⏱ ${c.days}</span><b>Get a quote</b></div></div>
+  </a>`).join('');
+
+function contact(){
+  return `<section class="contact" id="contact">
+    <div><h2>Tell us what<br><em>you need</em></h2><p style="color:var(--muted);margin-top:10px">Share your requirement and we'll get back with price, paper options and delivery time.</p>
+      <ul><li><i>📞</i><span><b>Call / WhatsApp</b>+91 98XXX XXXXX</span></li><li><i>✉️</i><span><b>Email</b>hello@rajgraphics.in</span></li><li><i>📍</i><span><b>Store</b>Shop address, Area, City – PIN</span></li></ul>
+    </div>
+    <form data-form>${fields('')}</form>
+  </section>`;
+}
+
+function fields(product){
+  return `
+    <label class="f">Name<input required name="name" placeholder="Your name"></label>
+    <label class="f">Mobile<input required name="phone" type="tel" pattern="[0-9+ ]{10,14}" placeholder="10-digit mobile"></label>
+    <label class="f full">Product<select name="product">${['', ...CATS.map(c => c.name)].map(n => `<option${n && product.startsWith(n) ? ' selected' : ''}>${n || 'Select product'}</option>`).join('')}${product && !CATS.some(c => product.startsWith(c.name)) ? `<option selected>${product}</option>` : ''}</select></label>
+    <label class="f">Quantity<input name="qty" placeholder="e.g. 1000"></label>
+    <label class="f">City<input name="city" placeholder="Delivery city"></label>
+    <label class="f full">Details<textarea name="msg" rows="3" placeholder="Size, finish, design ready or not…">${product ? 'Interested in: ' + product : ''}</textarea></label>
+    <div class="acts"><button class="btn btn-p" type="submit">Send enquiry</button><button class="btn btn-wa" type="button" data-wa-form>WhatsApp</button></div>
+    <div class="ok">✓ Thanks! We'll call you back shortly.</div>`;
+}
+
+function category(slug){
+  const c = CATS.find(x => x.slug === slug) || CATS[0];
+  const groups = slug === 'visiting-cards' ? VC : [{title:`${c.name} variants`,qty:'Custom quantity',c:['#e6157f','#2b2d8f'],items:(V[slug] || []).map(([t,f,im]) => ({t,f,img:im || c.img,d:c.days}))}];
+  const count = groups.reduce((a,g) => a + g.items.length, 0);
+  const [first, ...rest] = c.name.split(' ');
+  const others = CATS.filter(x => x.slug !== slug && x.m).slice(0, 5);
+  return `
+  <section class="lhero">
+    <div>
+      <div class="crumb"><a href="#/">Home</a> / <a href="#/" data-go="products">Products</a> / ${c.name}</div>
+      <span class="pill">✨ ${count} options available</span>
+      <h1>${rest.length ? `${first} <em>${rest.join(' ')}</em>` : `<em>${first}</em>`}</h1>
+      <p>Premium ${c.name.toLowerCase()} with a free design check and fast turnaround. Share your requirement and get a quote in minutes.</p>
+      <div class="ctas"><button class="btn btn-p" data-enq="${c.name}">Get a Quote →</button><a class="btn btn-o" href="#" data-wa>💬 Chat on WhatsApp</a></div>
+      <div class="feats">
+        <div><i style="background:#ece6ff">⏱</i><span><b>${c.days}</b>Turnaround</span></div>
+        <div><i style="background:#e3f6ea">🛡️</i><span><b>Free Check</b>Before every print</span></div>
+        <div><i style="background:#e4ecfd">🚚</i><span><b>Pan India</b>Safe delivery</span></div>
+      </div>
+    </div>
+    <div class="art"><img ${c.m ? 'class="m" ' : ''}src="${img(c.m || c.img)}" alt="${c.name}"></div>
+  </section>
+  ${groups.length > 1 ? `<div class="chips">${groups.map((g,i) => `<a class="chip${i ? '' : ' on'}" href="#" data-jump="g${i}">${g.title}</a>`).join('')}</div>` : ''}
+  ${groups.map((g,i) => `
+  <section class="grp" id="g${i}">
+    <div class="grp-h"><div><h2>${g.title}</h2><p>${g.items.length} options · price shared on enquiry</p></div><span class="qty">${g.qty}</span></div>
+    <div class="prods">${g.items.map((p,j) => card(p, g, c, i, j)).join('')}</div>
+  </section>`).join('')}
+  <div class="sec"><div><h2>Explore More Categories</h2><p>Everything your business needs, printed under one roof.</p></div><a class="btn btn-o" href="#/" data-go="products">View All Products →</a></div>
+  <div class="cats">${catCards(others)}</div>
+  ${contact()}`;
+}
+
+function card(p, g, c, i, j){
+  const label = `${c.name} – ${p.t}${p.sub ? ' (' + p.sub + ')' : ''}`;
+  const media = p.img
+    ? `<img loading="lazy" src="${img(p.img)}" alt="${p.t}">${p.o ? `<span class="badge">${p.o.length} options</span>` : ''}`
+    : `<div class="tile" style="background:${PASTEL[j % 5]}"><div class="card3d" style="${grad(g.c || OPTC[i % 4])}"><div><strong>${p.t.replace(' + ','<br>+ ')}</strong>${p.sub ? `<small>${p.sub}</small>` : ''}</div></div></div>`;
+  return `<article class="prod">
+    <div class="media">${p.n ? '<span class="ribbon">NEW</span>' : ''}${media}</div>
+    <div class="bd">
+      ${p.code ? `<span class="code">Code ${p.code}</span>` : ''}
+      <h3>${p.t}${p.sub ? ` <small style="color:var(--muted);font-weight:600">· ${p.sub}</small>` : ''}</h3>
+      <span class="feat">${p.f}</span>
+      ${p.o ? `<div class="opts">${p.o.map(o => `<span>${o}</span>`).join('')}</div>` : ''}
+      <div class="row"><span class="time">⏱ ${p.d}</span><button class="enq" data-enq="${label}" data-img="${p.img || c.img}">Enquire →</button></div>
+    </div>
+  </article>`;
+}
+
+const app = $('#app');
+function route(){
+  const m = location.hash.match(/^#\/c\/(.+)/);
+  app.innerHTML = m ? category(m[1]) : home($('#q').value.trim().toLowerCase());
+  scrollTo(0, 0);
+  spy();
+}
+function spy(){
+  const chips = [...document.querySelectorAll('.chip')];
+  if (!chips.length) return;
+  const io = new IntersectionObserver(es => es.forEach(e => {
+    if (e.isIntersecting) chips.forEach(c => c.classList.toggle('on', c.dataset.jump === e.target.id));
+  }), {rootMargin:'-150px 0px -60% 0px'});
+  document.querySelectorAll('.grp').forEach(g => io.observe(g));
+}
+
+function formText(f){
+  const d = Object.fromEntries(new FormData(f));
+  return `Hi Raj Graphics, I need a quote.\nName: ${d.name}\nProduct: ${d.product}\nQty: ${d.qty}\nCity: ${d.city}\n${d.msg}`;
+}
+
+const dlg = $('#dlg');
+document.addEventListener('click', e => {
+  const t = e.target.closest('[data-enq],[data-wa],[data-wa-form],[data-close],[data-jump],[data-go],[data-track]');
+  if (!t) return;
+  if (t.dataset.go) { e.preventDefault(); if (location.hash.startsWith('#/c/')) { location.hash = '#/'; setTimeout(() => document.getElementById(t.dataset.go)?.scrollIntoView({behavior:'smooth'}), 50); } else document.getElementById(t.dataset.go)?.scrollIntoView({behavior:'smooth'}); }
+  else if (t.dataset.jump !== undefined) { e.preventDefault(); document.getElementById(t.dataset.jump).scrollIntoView({behavior:'smooth'}); }
+  else if (t.dataset.enq !== undefined) {
+    e.preventDefault();
+    $('#dtitle').textContent = t.dataset.enq || 'Get a quote';
+    $('#dimg').src = img(t.dataset.img || 'visiting');
+    $('#dform').innerHTML = fields(t.dataset.enq);
+    dlg.showModal();
+  }
+  else if (t.dataset.track !== undefined) { e.preventDefault(); open(waLink('Hi Raj Graphics, I want to check the status of my order.'), '_blank'); }
+  else if (t.dataset.wa !== undefined) { e.preventDefault(); open(waLink(), '_blank'); }
+  else if (t.dataset.waForm !== undefined) { const f = t.closest('form'); if (f.reportValidity()) open(waLink(formText(f)), '_blank'); }
+  else if (t.dataset.close !== undefined) dlg.close();
+});
+document.addEventListener('submit', e => {
+  e.preventDefault();
+  const f = e.target;
+  f.querySelector('.ok').style.display = 'block';
+  f.querySelector('[type=submit]').disabled = true;
+  if (f.id === 'dform') setTimeout(() => dlg.close(), 1600);
+});
+dlg.addEventListener('click', e => { if (e.target === dlg) dlg.close(); });
+$('#q').addEventListener('input', () => { if (location.hash.startsWith('#/c/')) location.hash = '#/'; else route(); });
+addEventListener('hashchange', route);
+route();
+</script>
+</body>
+</html>
