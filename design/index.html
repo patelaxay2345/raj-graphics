@@ -107,7 +107,7 @@ nav.main a:hover{background:#f1f1fb;color:var(--navy)}
 .grp-h h2{font-size:26px;letter-spacing:-.025em}
 .grp-h p{color:var(--muted);font-size:14px}
 .grp-h .qty{font-size:12.5px;font-weight:700;padding:6px 14px;border-radius:999px;background:#fbe0ec;color:var(--pink)}
-.prods{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:20px}
+.prods{display:grid;grid-template-columns:repeat(4,1fr);gap:24px}
 .prod{background:#fff;border:1px solid var(--line);border-radius:18px;overflow:hidden;display:flex;flex-direction:column;transition:.2s;box-shadow:0 1px 3px rgba(20,22,50,.05)}
 .prod:hover{box-shadow:var(--sh);transform:translateY(-4px)}
 .prod .media{position:relative;aspect-ratio:16/10;overflow:hidden}
@@ -164,7 +164,7 @@ nav.main a:hover{background:#f1f1fb;color:var(--navy)}
 .news input{flex:1;border:0;outline:0;padding:0 18px;border-radius:999px;color:var(--ink);min-width:0}
 .news .ok{grid-column:auto;position:absolute;margin-top:64px;padding:6px 12px}
 
-.tpls{display:grid;grid-template-columns:repeat(5,1fr);gap:22px}
+.tpls{display:grid;grid-template-columns:repeat(4,1fr);gap:24px}
 .tpl{background:#fff;border:1px solid var(--line);border-radius:16px;overflow:hidden;display:flex;flex-direction:column;transition:.2s}
 .tpl:hover{box-shadow:var(--sh);transform:translateY(-3px)}
 .tpl .ph{aspect-ratio:1;display:grid;place-items:center;padding:12px}
@@ -173,7 +173,28 @@ nav.main a:hover{background:#f1f1fb;color:var(--navy)}
 .tpl .bd{padding:10px 12px 12px;display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:13px;font-weight:700}
 .tpl .bd span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .tpl .enq{padding:6px 12px;font-size:12px;flex:none}
+.tpl{color:inherit}
 .tpl[hidden]{display:none}
+.tpl .go-v{padding:6px 12px;font-size:12px;border-radius:999px;border:1.5px solid #f5b6d5;color:var(--pink);flex:none}
+.tpl:hover .go-v{background:var(--pink);color:#fff;border-color:var(--pink)}
+a.prod{color:inherit}
+/* detail */
+.pd{display:grid;grid-template-columns:1.05fr 1fr;gap:48px;margin-top:16px;align-items:start}
+.pd-img{border-radius:28px;display:grid;place-items:center;padding:36px;aspect-ratio:1;position:sticky;top:96px}
+.pd-img img{max-width:100%;max-height:100%;object-fit:contain;border-radius:10px;filter:drop-shadow(0 18px 30px rgba(20,22,50,.18))}
+.pd h1{font-size:clamp(30px,3.4vw,46px);letter-spacing:-.03em;line-height:1.1;color:#0e1033;margin:6px 0 4px}
+.pd .sub{color:var(--muted);font-size:16px}
+.pd .desc{color:var(--muted);font-size:16px;margin:18px 0 22px}
+.specs{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:22px}
+.specs div{background:#fff;border:1px solid var(--line);border-radius:14px;padding:12px 14px;font-size:13px;color:var(--muted)}
+.specs b{display:block;color:var(--ink);font-size:15px}
+.pd h4{font-size:14px;margin-bottom:10px}
+.optl{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:26px}
+.optl span{padding:7px 14px;border-radius:999px;background:#f3effd;color:#5b35b5;font-weight:700;font-size:13px}
+.pd .ctas{display:flex;gap:12px;flex-wrap:wrap}
+.pd .ctas .btn{padding:14px 26px;font-size:15px}
+.pn{display:flex;justify-content:space-between;gap:12px;margin-top:26px;padding-top:20px;border-top:1px solid var(--line)}
+
 .more{display:flex;justify-content:center;margin-top:18px}
 
 /* contact */
@@ -224,7 +245,7 @@ footer .brand{margin-bottom:12px;color:var(--ink)}
   .why,.steps,.feats{grid-template-columns:1fr 1fr}
   .contact{grid-template-columns:1fr}
   .ft,.why4,.reviews{grid-template-columns:1fr 1fr}
-  .cats,.tpls{grid-template-columns:repeat(3,1fr)}
+  .cats,.tpls,.prods{grid-template-columns:repeat(3,1fr)}
   .flow{grid-template-columns:repeat(3,1fr);row-gap:28px}
   .flow>div::after{display:none}
   .custom,.lhero{grid-template-columns:1fr;padding:28px 24px}
@@ -234,7 +255,8 @@ footer .brand{margin-bottom:12px;color:var(--ink)}
 @media (max-width:640px){
   .search,.hd>.btn-o{display:none}
   .hd{gap:12px;justify-content:space-between}
-  .cats,.tpls{grid-template-columns:1fr 1fr;gap:12px}
+  .cats,.tpls,.prods{grid-template-columns:1fr 1fr;gap:12px}
+  .pd{grid-template-columns:1fr}
   .cat .meta{flex-direction:column;gap:0}
   .cat .go{display:none}
   .cat h3{font-size:14.5px}
@@ -329,6 +351,12 @@ const V = {
   'targets':[['10m Air Rifle','ISSF size'],['Pistol Targets','25m / 50m'],['Practice Sheets','Bulk packs'],['Custom Target','Your layout']]
 };
 const TPL_PAGE = 20;
+const products = slug => {
+  const c = CATS.find(x => x.slug === slug);
+  const designs = (TPL[slug] || []).flatMap(g => g.items.map(([t,src]) => ({t, img:src, group:g.g, design:true})));
+  const variants = (V[slug] || []).map(([t,f,im],j) => ({t, f, img:im || tplImg(slug, j) || c.m || c.img, group:`${c.name} variants`}));
+  return [...designs, ...variants];
+};
 const PASTEL = ['#fde8f1','#fdf2dc','#e2f6ee','#e6effd','#efeafd'];
 
 const $ = s => document.querySelector(s);
@@ -460,42 +488,83 @@ function category(slug){
     <div class="art"><img ${c.m ? 'class="m" ' : ''}src="${img(c.m || c.img)}" alt="${c.name}"></div>
   </section>
   ${tabs.length > 1 ? `<div class="chips">${tabs.map(([id,t],i) => `<a class="chip${i ? '' : ' on'}" href="#" data-jump="${id}">${t}</a>`).join('')}</div>` : ''}
-  ${tpls.map((t,i) => `
+  ${tpls.map((t,i) => { const off = tpls.slice(0, i).reduce((a,x) => a + x.items.length, 0); return `
   <section class="grp" id="t${i}">
     <div class="grp-h"><div><h2>${t.g}</h2><p>${t.items.length} ready designs · we customise with your details</p></div><span class="qty">Free customisation</span></div>
     <div class="tpls">${t.items.map(([n,src],j) => `
-      <article class="tpl"${j >= TPL_PAGE ? ' hidden' : ''}>
+      <a class="tpl" href="#/p/${slug}/${off + j}"${j >= TPL_PAGE ? ' hidden' : ''}>
         <div class="ph" style="background:${PASTEL[j % 5]}"><img loading="lazy" src="${src}" alt="${n}"></div>
-        <div class="bd"><span title="${n}">${n}</span><button class="enq" data-enq="${c.name} – design ${n}" data-img="${src}">Use →</button></div>
-      </article>`).join('')}</div>
+        <div class="bd"><span title="${n}">${n}</span><span class="go-v">View →</span></div>
+      </a>`).join('')}</div>
     ${t.items.length > TPL_PAGE ? `<div class="more"><button class="btn btn-o" data-more>Show all ${t.items.length} designs ↓</button></div>` : ''}
-  </section>`).join('')}
+  </section>`; }).join('')}
   ${groups.map((g,i) => `
   <section class="grp" id="g${i}">
     <div class="grp-h"><div><h2>${g.title}</h2><p>${g.items.length} options · price shared on enquiry</p></div><span class="qty">${g.qty}</span></div>
-    <div class="prods">${g.items.map((p,j) => card(p, c, j)).join('')}</div>
+    <div class="prods">${g.items.map((p,j) => card(p, c, j, tpls.reduce((a,x) => a + x.items.length, 0) + j)).join('')}</div>
   </section>`).join('')}
   <div class="sec"><div><h2>Explore More Categories</h2><p>Everything your business needs, printed under one roof.</p></div><a class="btn btn-o" href="#/" data-go="products">View All Products →</a></div>
   <div class="cats">${catCards(others)}</div>
   ${contact()}`;
 }
 
-function card(p, c, j){
+function card(p, c, j, idx){
   const fit = /^(img\/t\/|m-|cover\/)/.test(p.img) ? ` class="fit" style="background:${PASTEL[j % 5]}"` : '';
-  return `<article class="prod">
+  return `<a class="prod" href="#/p/${c.slug}/${idx}">
     <div class="media"><img loading="lazy" src="${img(p.img)}" alt="${p.t}"${fit}></div>
     <div class="bd">
       <h3>${p.t}</h3>
       <span class="feat">${p.f}</span>
-      <div class="row"><span class="time">⏱ ${p.d}</span><button class="enq" data-enq="${c.name} – ${p.t}" data-img="${p.img}">Enquire →</button></div>
+      <div class="row"><span class="time">⏱ ${p.d}</span><span class="enq">View →</span></div>
     </div>
-  </article>`;
+  </a>`;
+}
+
+function detail(slug, i){
+  const c = CATS.find(x => x.slug === slug) || CATS[0];
+  const list = products(c.slug);
+  const p = list[i] || list[0];
+  if (!p) return category(c.slug);
+  const n = list.indexOf(p);
+  const label = `${c.name} – ${p.design ? 'design ' : ''}${p.t}`;
+  const related = list.filter(x => x.group === p.group && x !== p).slice(0, 4);
+  const opts = (V[c.slug] || []).map(v => v[0]);
+  return `
+  <div class="crumb" style="margin-top:20px"><a href="#/">Home</a> / <a href="#/c/${c.slug}">${c.name}</a> / ${p.t}</div>
+  <section class="pd">
+    <div class="pd-img" style="background:${PASTEL[n % 5]}"><img src="${img(p.img)}" alt="${p.t}"></div>
+    <div>
+      <span class="pill">${p.design ? '🎨 Ready design' : '✨ Product variant'} · ${p.group}</span>
+      <h1>${p.t}</h1>
+      <div class="sub">${c.name}</div>
+      <p class="desc">${p.f || `A ready-made ${c.name.toLowerCase()} design. We customise it with your name, logo and contact details for free, check the file, and print it on the paper and finish you choose.`}</p>
+      <div class="specs">
+        <div><b>${c.days}</b>Turnaround</div>
+        <div><b>${p.design ? 'Free' : 'Available'}</b>${p.design ? 'Design customisation' : 'Design support'}</div>
+        <div><b>On enquiry</b>Price &amp; quantity</div>
+        <div><b>Pan India</b>Safe delivery</div>
+      </div>
+      ${opts.length ? `<h4>Available options</h4><div class="optl">${opts.map(o => `<span>${o}</span>`).join('')}</div>` : ''}
+      <div class="ctas"><button class="btn btn-p" data-enq="${label}" data-img="${p.img}">Enquire Now →</button><a class="btn btn-o" href="#" data-wa="Hi Raj Graphics, I'm interested in ${label}.">💬 WhatsApp</a></div>
+      <div class="pn">
+        ${n > 0 ? `<a class="btn btn-o" href="#/p/${c.slug}/${n - 1}">← ${list[n - 1].t}</a>` : '<span></span>'}
+        ${n < list.length - 1 ? `<a class="btn btn-o" href="#/p/${c.slug}/${n + 1}">${list[n + 1].t} →</a>` : ''}
+      </div>
+    </div>
+  </section>
+  ${related.length ? `<div class="sec"><div><h2>More ${p.group}</h2><p>Similar options from ${c.name}.</p></div><a class="btn btn-o" href="#/c/${c.slug}">View all →</a></div>
+  <div class="tpls">${related.map(r => `
+    <a class="tpl" href="#/p/${c.slug}/${list.indexOf(r)}">
+      <div class="ph" style="background:${PASTEL[list.indexOf(r) % 5]}"><img loading="lazy" src="${img(r.img)}" alt="${r.t}"></div>
+      <div class="bd"><span>${r.t}</span><span class="go-v">View →</span></div>
+    </a>`).join('')}</div>` : ''}
+  ${contact()}`;
 }
 
 const app = $('#app');
 function route(){
-  const m = location.hash.match(/^#\/c\/(.+)/);
-  app.innerHTML = m ? category(m[1]) : home($('#q').value.trim().toLowerCase());
+  const m = location.hash.match(/^#\/c\/(.+)/), d = location.hash.match(/^#\/p\/([^/]+)\/(\d+)/);
+  app.innerHTML = d ? detail(d[1], +d[2]) : m ? category(m[1]) : home($('#q').value.trim().toLowerCase());
   scrollTo(0, 0);
   spy();
 }
@@ -528,7 +597,7 @@ document.addEventListener('click', e => {
   }
   else if (t.dataset.more !== undefined) { t.closest('.grp').querySelectorAll('.tpl[hidden]').forEach(x => x.hidden = false); t.parentElement.remove(); }
   else if (t.dataset.track !== undefined) { e.preventDefault(); open(waLink('Hi Raj Graphics, I want to check the status of my order.'), '_blank'); }
-  else if (t.dataset.wa !== undefined) { e.preventDefault(); open(waLink(), '_blank'); }
+  else if (t.dataset.wa !== undefined) { e.preventDefault(); open(waLink(t.dataset.wa), '_blank'); }
   else if (t.dataset.waForm !== undefined) { const f = t.closest('form'); if (f.reportValidity()) open(waLink(formText(f)), '_blank'); }
   else if (t.dataset.close !== undefined) dlg.close();
 });

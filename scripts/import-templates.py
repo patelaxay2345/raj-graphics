@@ -3,6 +3,7 @@
 Writes web-ready sRGB thumbnails to design/img/t/<category>/ and design/templates.js.
 """
 import json, os, subprocess
+from urllib.parse import unquote
 
 ROOT = os.path.join(os.path.dirname(__file__), '..', 'design')
 SRC = os.path.join(ROOT, 'content')
@@ -30,6 +31,11 @@ def thumb(src, dest):
 
 full = os.path.join(SRC, 'data-full.json')  # from crawl-templates.py, has every page
 data = json.load(open(full if os.path.exists(full) else os.path.join(SRC, 'data.json')))
+# images the original scrape saved, keyed by source image URL - fallback when the re-crawl got a 404
+orig = json.load(open(os.path.join(SRC, 'data.json')))
+saved = {unquote(d['image']): d['local_image'] for c in orig['categories']
+         for d in c.get('designs', []) + [x for sc in c.get('subcategories', []) for x in sc['designs']] if d.get('local_image')}
+
 tpl, counts = {}, {}
 for c in data['categories']:
     site = MAP[c['slug']]
@@ -41,7 +47,7 @@ for c in data['categories']:
     for title, designs in lists:
         items = []
         for d in designs:
-            rel = d.get('local_image')
+            rel = d.get('local_image') or saved.get(unquote(d['image']))
             if not rel or not os.path.exists(os.path.join(SRC, rel)):
                 continue
             n += 1
