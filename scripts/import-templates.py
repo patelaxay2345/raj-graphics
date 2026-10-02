@@ -1,4 +1,4 @@
-"""Import design templates from design/content (data.json + images) into the site.
+"""Import design templates from design/content (data-full.json or data.json + images) into the site.
 
 Writes web-ready sRGB thumbnails to design/img/t/<category>/ and design/templates.js.
 """
@@ -23,7 +23,8 @@ MAP = {
     'doctor-files': ('files', 'Doctor file designs'),
 }
 
-data = json.load(open(os.path.join(SRC, 'data.json')))
+full = os.path.join(SRC, 'data-full.json')  # from crawl-templates.py, has every page
+data = json.load(open(full if os.path.exists(full) else os.path.join(SRC, 'data.json')))
 tpl = {}
 for c in data['categories']:
     site, title = MAP[c['slug']]
