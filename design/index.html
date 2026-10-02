@@ -171,6 +171,18 @@ nav.main a:hover{background:#f1f1fb;color:var(--navy)}
 .news input{flex:1;border:0;outline:0;padding:0 18px;border-radius:999px;color:var(--ink);min-width:0}
 .news .ok{grid-column:auto;position:absolute;margin-top:64px;padding:6px 12px}
 
+.tpls{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:16px}
+.tpl{background:#fff;border:1px solid var(--line);border-radius:16px;overflow:hidden;display:flex;flex-direction:column;transition:.2s}
+.tpl:hover{box-shadow:var(--sh);transform:translateY(-3px)}
+.tpl .ph{aspect-ratio:1;display:grid;place-items:center;padding:12px}
+.tpl .ph img{width:100%;height:100%;object-fit:contain;transition:transform .4s}
+.tpl:hover .ph img{transform:scale(1.05)}
+.tpl .bd{padding:10px 12px 12px;display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:13px;font-weight:700}
+.tpl .bd span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tpl .enq{padding:6px 12px;font-size:12px;flex:none}
+.tpl[hidden]{display:none}
+.more{display:flex;justify-content:center;margin-top:18px}
+
 /* contact */
 .contact{display:grid;grid-template-columns:1fr 1.2fr;gap:32px;background:linear-gradient(110deg,#fdeef6,#f6edfb 55%,#ece9fd);border-radius:28px;padding:40px 44px;margin-top:48px}
 .contact form{background:#fff;border-radius:20px;padding:24px;box-shadow:0 1px 3px rgba(20,22,50,.05)}
@@ -279,6 +291,7 @@ footer .brand{margin-bottom:12px;color:var(--ink)}
   <form id="dform"></form>
 </dialog>
 
+<script src="templates.js"></script>
 <script>
 const WA = '919800000000';
 const img = n => `img/${n}.jpg`;
@@ -297,6 +310,7 @@ const CATS = [
   {slug:'pens',name:'Branded Pens',img:'pen',days:'5 days'},
   {slug:'digital',m:'m-digital',name:'Digital Paper Printing',img:'digital',days:'Same day',tag:'Fast'},
   {slug:'offset',name:'Offset Printing',img:'offset',days:'2–7 days'},
+  {slug:'id-cards',m:'m-idcard',name:'ID Cards',img:'v-nfc',days:'3 days'},
   {slug:'targets',name:'Shooting Targets',img:'target',days:'3 days'}
 ];
 
@@ -330,6 +344,7 @@ const VC = [
 ];
 
 const V = {
+  'id-cards':[['PVC ID Card','CR80 size, single or double side'],['ID Card + Lanyard','Printed lanyard with hook'],['Employee ID','Photo, name and barcode'],['School ID','Bulk names from Excel']],
   'letter-heads':[['Classic Letterhead','100 GSM bond, single/double side'],['Premium Textured','Laid / linen finish 120 GSM'],['With Matching Envelope','Complete stationery kit'],['Wedding Stationery','Invites, menus & place cards','v-wedding']],
   'envelopes':[['Cloth-lined','Strong courier envelopes'],['Window Envelope','DL / 10×4.5 with window'],['Kraft Envelope','Eco brown, custom print','v-stationery'],['Invitation Envelope','Pearl & metallic sheets']],
   'pamphlets':[['A4 / A5 Flyers','130–170 GSM art paper'],['Tri-fold Brochure','Glossy / matt lamination'],['Posters','A3 to A0, indoor & outdoor'],['Menu Cards','Laminated, wipe-clean']],
@@ -344,6 +359,7 @@ const V = {
   'offset':[['Bulk Brochures','5,000+ copies'],['Magazines & Catalogues','Perfect bound'],['Packaging Boxes','Mono carton'],['Custom Job','Share your spec']],
   'targets':[['10m Air Rifle','ISSF size'],['Pistol Targets','25m / 50m'],['Practice Sheets','Bulk packs'],['Custom Target','Your layout']]
 };
+const TPL_PAGE = 20;
 const PASTEL = ['#fde8f1','#fdf2dc','#e2f6ee','#e6effd','#efeafd'];
 const OPTC = [['#f59e0b','#ea580c'],['#3730a3','#0369a1'],['#e6157f','#9d174d'],['#16a34a','#166534']];
 
@@ -457,6 +473,8 @@ function category(slug){
   const groups = slug === 'visiting-cards' ? VC : [{title:`${c.name} variants`,qty:'Custom quantity',c:['#e6157f','#2b2d8f'],items:(V[slug] || []).map(([t,f,im]) => ({t,f,img:im || c.img,d:c.days}))}];
   const count = groups.reduce((a,g) => a + g.items.length, 0);
   const [first, ...rest] = c.name.split(' ');
+  const tpls = TPL[slug] || [];
+  const tabs = [...groups.map((g,i) => [`g${i}`, g.title]), ...tpls.map((t,i) => [`t${i}`, t.g])];
   const others = CATS.filter(x => x.slug !== slug && x.m).slice(0, 5);
   return `
   <section class="lhero">
@@ -474,11 +492,21 @@ function category(slug){
     </div>
     <div class="art"><img ${c.m ? 'class="m" ' : ''}src="${img(c.m || c.img)}" alt="${c.name}"></div>
   </section>
-  ${groups.length > 1 ? `<div class="chips">${groups.map((g,i) => `<a class="chip${i ? '' : ' on'}" href="#" data-jump="g${i}">${g.title}</a>`).join('')}</div>` : ''}
+  ${tabs.length > 1 ? `<div class="chips">${tabs.map(([id,t],i) => `<a class="chip${i ? '' : ' on'}" href="#" data-jump="${id}">${t}</a>`).join('')}</div>` : ''}
   ${groups.map((g,i) => `
   <section class="grp" id="g${i}">
     <div class="grp-h"><div><h2>${g.title}</h2><p>${g.items.length} options · price shared on enquiry</p></div><span class="qty">${g.qty}</span></div>
     <div class="prods">${g.items.map((p,j) => card(p, g, c, i, j)).join('')}</div>
+  </section>`).join('')}
+  ${tpls.map((t,i) => `
+  <section class="grp" id="t${i}">
+    <div class="grp-h"><div><h2>${t.g}</h2><p>${t.items.length} ready designs · we customise with your details</p></div><span class="qty">Free customisation</span></div>
+    <div class="tpls">${t.items.map(([n,src],j) => `
+      <article class="tpl"${j >= TPL_PAGE ? ' hidden' : ''}>
+        <div class="ph" style="background:${PASTEL[j % 5]}"><img loading="lazy" src="${src}" alt="${n}"></div>
+        <div class="bd"><span title="${n}">${n}</span><button class="enq" data-enq="${c.name} – design ${n}" data-img="${src}">Use →</button></div>
+      </article>`).join('')}</div>
+    ${t.items.length > TPL_PAGE ? `<div class="more"><button class="btn btn-o" data-more>Show all ${t.items.length} designs ↓</button></div>` : ''}
   </section>`).join('')}
   <div class="sec"><div><h2>Explore More Categories</h2><p>Everything your business needs, printed under one roof.</p></div><a class="btn btn-o" href="#/" data-go="products">View All Products →</a></div>
   <div class="cats">${catCards(others)}</div>
@@ -525,17 +553,18 @@ function formText(f){
 
 const dlg = $('#dlg');
 document.addEventListener('click', e => {
-  const t = e.target.closest('[data-enq],[data-wa],[data-wa-form],[data-close],[data-jump],[data-go],[data-track]');
+  const t = e.target.closest('[data-enq],[data-wa],[data-wa-form],[data-close],[data-jump],[data-go],[data-track],[data-more]');
   if (!t) return;
   if (t.dataset.go) { e.preventDefault(); if (location.hash.startsWith('#/c/')) { location.hash = '#/'; setTimeout(() => document.getElementById(t.dataset.go)?.scrollIntoView({behavior:'smooth'}), 50); } else document.getElementById(t.dataset.go)?.scrollIntoView({behavior:'smooth'}); }
   else if (t.dataset.jump !== undefined) { e.preventDefault(); document.getElementById(t.dataset.jump).scrollIntoView({behavior:'smooth'}); }
   else if (t.dataset.enq !== undefined) {
     e.preventDefault();
     $('#dtitle').textContent = t.dataset.enq || 'Get a quote';
-    $('#dimg').src = img(t.dataset.img || 'visiting');
+    $('#dimg').src = t.dataset.img?.includes('/') ? t.dataset.img : img(t.dataset.img || 'visiting');
     $('#dform').innerHTML = fields(t.dataset.enq);
     dlg.showModal();
   }
+  else if (t.dataset.more !== undefined) { t.closest('.grp').querySelectorAll('.tpl[hidden]').forEach(x => x.hidden = false); t.parentElement.remove(); }
   else if (t.dataset.track !== undefined) { e.preventDefault(); open(waLink('Hi Raj Graphics, I want to check the status of my order.'), '_blank'); }
   else if (t.dataset.wa !== undefined) { e.preventDefault(); open(waLink(), '_blank'); }
   else if (t.dataset.waForm !== undefined) { const f = t.closest('form'); if (f.reportValidity()) open(waLink(formText(f)), '_blank'); }
