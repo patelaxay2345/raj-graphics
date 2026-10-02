@@ -114,19 +114,9 @@ nav.main a:hover{background:#f1f1fb;color:var(--navy)}
 .prod .media img{width:100%;height:100%;object-fit:cover;transition:transform .5s}
 .prod:hover .media img{transform:scale(1.05)}
 .prod .media img.fit{object-fit:contain;padding:10px}
-.prod .tile{display:grid;place-items:center;text-align:center;padding:16px;height:100%}
-.prod .tile .card3d{width:62%;aspect-ratio:1.75;border-radius:10px;display:grid;place-items:center;color:#fff;box-shadow:0 18px 30px rgba(20,22,50,.22);transform:rotate(-6deg);transition:transform .4s;padding:10px}
-.prod:hover .tile .card3d{transform:rotate(0) scale(1.04)}
-.prod .tile strong{font-size:15px;line-height:1.15;font-weight:800;text-transform:uppercase}
-.prod .tile small{display:block;font-size:10px;font-weight:700;margin-top:4px;opacity:.9;letter-spacing:.04em}
-.ribbon{position:absolute;top:12px;right:12px;background:var(--pink);color:#fff;font-size:11px;font-weight:800;padding:4px 10px;border-radius:999px;z-index:2}
-.badge{position:absolute;left:12px;top:12px;z-index:2;background:#fff;font-size:11px;font-weight:800;padding:4px 10px;border-radius:999px;color:var(--navy);box-shadow:0 2px 6px rgba(0,0,0,.08)}
 .prod .bd{padding:16px 18px 18px;display:flex;flex-direction:column;gap:6px;flex:1}
 .prod h3{font-size:16.5px}
-.prod .code{font-size:11.5px;color:var(--pink);font-weight:800;letter-spacing:.04em}
 .prod .feat{font-size:14px;color:var(--muted)}
-.opts{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}
-.opts span{font-size:11.5px;font-weight:700;padding:4px 10px;border-radius:999px;background:#f3effd;color:#5b35b5}
 .prod .row{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:auto;padding-top:14px}
 .time{font-size:12.5px;font-weight:600;color:var(--muted)}
 .enq{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:999px;border:1.5px solid #f5b6d5;color:var(--pink);font-weight:700;font-size:13px;transition:.2s}
@@ -174,7 +164,7 @@ nav.main a:hover{background:#f1f1fb;color:var(--navy)}
 .news input{flex:1;border:0;outline:0;padding:0 18px;border-radius:999px;color:var(--ink);min-width:0}
 .news .ok{grid-column:auto;position:absolute;margin-top:64px;padding:6px 12px}
 
-.tpls{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:16px}
+.tpls{display:grid;grid-template-columns:repeat(5,1fr);gap:22px}
 .tpl{background:#fff;border:1px solid var(--line);border-radius:16px;overflow:hidden;display:flex;flex-direction:column;transition:.2s}
 .tpl:hover{box-shadow:var(--sh);transform:translateY(-3px)}
 .tpl .ph{aspect-ratio:1;display:grid;place-items:center;padding:12px}
@@ -234,7 +224,7 @@ footer .brand{margin-bottom:12px;color:var(--ink)}
   .why,.steps,.feats{grid-template-columns:1fr 1fr}
   .contact{grid-template-columns:1fr}
   .ft,.why4,.reviews{grid-template-columns:1fr 1fr}
-  .cats{grid-template-columns:repeat(3,1fr)}
+  .cats,.tpls{grid-template-columns:repeat(3,1fr)}
   .flow{grid-template-columns:repeat(3,1fr);row-gap:28px}
   .flow>div::after{display:none}
   .custom,.lhero{grid-template-columns:1fr;padding:28px 24px}
@@ -244,7 +234,7 @@ footer .brand{margin-bottom:12px;color:var(--ink)}
 @media (max-width:640px){
   .search,.hd>.btn-o{display:none}
   .hd{gap:12px;justify-content:space-between}
-  .cats{grid-template-columns:1fr 1fr;gap:12px}
+  .cats,.tpls{grid-template-columns:1fr 1fr;gap:12px}
   .cat .meta{flex-direction:column;gap:0}
   .cat .go{display:none}
   .cat h3{font-size:14.5px}
@@ -320,35 +310,6 @@ const CATS = [
   {slug:'targets',name:'Shooting Targets',img:'target',days:'3 days'}
 ];
 
-const VC = [
-  {title:'Premium & modern finishes',qty:'Min. 100 cards',c:['#e6157f','#2b2d8f'],items:[
-    {t:'Velvet Touch',img:'v-velvet',f:'Soft-touch suede feel, 500 GSM',o:['Foil','Spot UV','Die-cut'],d:'3 days',n:1},
-    {t:'Gold & Rose Foil',img:'v-foil',f:'Hot-foil stamping on dark or textured stock',o:['Gold','Silver','Rose gold'],d:'3 days'},
-    {t:'Raised Spot UV',img:'v-spotuv',f:'3D gloss highlights on matt base',o:['MGI 3D','Flat UV'],d:'2 days',n:1},
-    {t:'Metal Cards',img:'v-metal',f:'Laser-etched steel or brass',o:['Black','Gold','Silver'],d:'7 days'},
-    {t:'Letterpress',img:'v-letterpress',f:'Deep deboss on 600 GSM cotton board',o:['1–2 colour','Edge paint'],d:'5 days'},
-    {t:'Eco Kraft',img:'v-kraft',f:'Recycled kraft with white or foil print',o:['Rounded','Square'],d:'3 days'},
-    {t:'NFC Smart Card',img:'v-nfc',f:'Tap-to-share contact, PVC with chip',o:['Matt PVC','Metal'],d:'5 days',n:1},
-    {t:'Minimal Matt',img:'v-matt',f:'Clean 400 GSM matt lamination',o:['Rounded corners','Duplex'],d:'2 days'}]},
-  {title:'500 GSM Cards',qty:'Qty. 500',c:['#f59e0b','#ea580c'],items:[
-    {t:'500 GSM + Velvet',code:'7',f:'Foil, Spot UV & Die-Cut available',d:'3 days'},
-    {t:'500 GSM + Matt',code:'8',f:'Foil, Spot UV & Die-Cut available',d:'3 days'},
-    {t:'500 GSM + Velvet',sub:'Digital + MGI',code:'7-MGI',f:'MGI Spot UV + Foil & Die-Cut',d:'2 days',n:1},
-    {t:'500 GSM + Matt',sub:'Digital + MGI',code:'8-MGI',f:'MGI Spot UV + Foil & Die-Cut',d:'2 days',n:1}]},
-  {title:'350–400 GSM Cards',qty:'Qty. 1000',c:['#3730a3','#0369a1'],items:[
-    {t:'400 GSM Matt + UV',code:'14',f:'Spot UV available',d:'2 days'},
-    {t:'350 GSM Matt',code:'15',f:'Premium thermal matt lamination',d:'2 days'},
-    {t:'350 GSM Matt + Texture',code:'16',f:'8 texture options',d:'3 days'}]},
-  {title:'Regular Visiting Cards',qty:'Qty. 1000',c:['#e6157f','#9d174d'],items:[
-    {t:'Gloss Lamination',code:'18',f:'Premium thermal gloss lamination',d:'1 day'},
-    {t:'Gloss UV Coated',code:'19',f:'Gloss UV coating',d:'12 hours'},
-    {t:'Without Lamination',code:'20',f:'Plain card, budget friendly',d:'2 days'},
-    {t:'Gloss + Texture',code:'17',f:'Gloss UV · 8 texture options',d:'3 days'}]},
-  {title:'NT / PVC Cards',qty:'Qty. 100 – 1000',c:['#16a34a','#166534'],items:[
-    {t:'NT Card',code:'30',f:'Non-tearable, waterproof',d:'3 days'},
-    {t:'Transparent PVC',code:'31',f:'Frosted or clear PVC',d:'4 days',n:1}]}
-];
-
 const V = {
   'die-cut-cards':[['Custom Die Shape','36+ die shapes available'],['Metal Die-cut','Laser-cut steel cards','v-metal'],['Rounded Die','Soft corners & ovals'],['Leaf & Badge Dies','Creative industry shapes']],
   'uv-texture':[['Spot UV Texture','Raised gloss pattern on matt','v-spotuv'],['Full UV Texture','Textured all-over finish'],['UV + Foil','Texture with gold foil','v-foil'],['Velvet + UV','Soft touch with gloss','v-velvet']],
@@ -369,10 +330,8 @@ const V = {
 };
 const TPL_PAGE = 20;
 const PASTEL = ['#fde8f1','#fdf2dc','#e2f6ee','#e6effd','#efeafd'];
-const OPTC = [['#f59e0b','#ea580c'],['#3730a3','#0369a1'],['#e6157f','#9d174d'],['#16a34a','#166534']];
 
 const $ = s => document.querySelector(s);
-const grad = g => `background:linear-gradient(135deg,${g[0]},${g[1]})`;
 const waLink = t => `https://wa.me/${WA}?text=${encodeURIComponent(t || 'Hi Raj Graphics, I need a printing quote.')}`;
 
 const HOME = ['visiting-cards','die-cut-cards','letter-heads','envelopes','bill-books','bags','files','uv-texture','tags','stickers','id-cards'];
@@ -478,7 +437,7 @@ function fields(product){
 
 function category(slug){
   const c = CATS.find(x => x.slug === slug) || CATS[0];
-  const groups = slug === 'visiting-cards' ? VC : [{title:`${c.name} variants`,qty:'Custom quantity',c:['#e6157f','#2b2d8f'],items:(V[slug] || []).map(([t,f,im],j) => ({t,f,img:im || tplImg(slug, j) || c.m || c.img,d:c.days}))}];
+  const groups = V[slug] ? [{title:`${c.name} variants`,qty:'Custom quantity',items:(V[slug] || []).map(([t,f,im],j) => ({t,f,img:im || tplImg(slug, j) || c.m || c.img,d:c.days}))}] : [];
   const count = groups.reduce((a,g) => a + g.items.length, 0);
   const [first, ...rest] = c.name.split(' ');
   const tpls = TPL[slug] || [];
@@ -514,26 +473,21 @@ function category(slug){
   ${groups.map((g,i) => `
   <section class="grp" id="g${i}">
     <div class="grp-h"><div><h2>${g.title}</h2><p>${g.items.length} options · price shared on enquiry</p></div><span class="qty">${g.qty}</span></div>
-    <div class="prods">${g.items.map((p,j) => card(p, g, c, i, j)).join('')}</div>
+    <div class="prods">${g.items.map((p,j) => card(p, c, j)).join('')}</div>
   </section>`).join('')}
   <div class="sec"><div><h2>Explore More Categories</h2><p>Everything your business needs, printed under one roof.</p></div><a class="btn btn-o" href="#/" data-go="products">View All Products →</a></div>
   <div class="cats">${catCards(others)}</div>
   ${contact()}`;
 }
 
-function card(p, g, c, i, j){
-  const label = `${c.name} – ${p.t}${p.sub ? ' (' + p.sub + ')' : ''}`;
-  const media = p.img
-    ? `<img loading="lazy" src="${img(p.img)}" alt="${p.t}"${/^(img\/t\/|m-|cover\/)/.test(p.img) ? ` class="fit" style="background:${PASTEL[j % 5]}"` : ''}>${p.o ? `<span class="badge">${p.o.length} options</span>` : ''}`
-    : `<div class="tile" style="background:${PASTEL[j % 5]}"><div class="card3d" style="${grad(g.c || OPTC[i % 4])}"><div><strong>${p.t.replace(' + ','<br>+ ')}</strong>${p.sub ? `<small>${p.sub}</small>` : ''}</div></div></div>`;
+function card(p, c, j){
+  const fit = /^(img\/t\/|m-|cover\/)/.test(p.img) ? ` class="fit" style="background:${PASTEL[j % 5]}"` : '';
   return `<article class="prod">
-    <div class="media">${p.n ? '<span class="ribbon">NEW</span>' : ''}${media}</div>
+    <div class="media"><img loading="lazy" src="${img(p.img)}" alt="${p.t}"${fit}></div>
     <div class="bd">
-      ${p.code ? `<span class="code">Code ${p.code}</span>` : ''}
-      <h3>${p.t}${p.sub ? ` <small style="color:var(--muted);font-weight:600">· ${p.sub}</small>` : ''}</h3>
+      <h3>${p.t}</h3>
       <span class="feat">${p.f}</span>
-      ${p.o ? `<div class="opts">${p.o.map(o => `<span>${o}</span>`).join('')}</div>` : ''}
-      <div class="row"><span class="time">⏱ ${p.d}</span><button class="enq" data-enq="${label}" data-img="${p.img || c.img}">Enquire →</button></div>
+      <div class="row"><span class="time">⏱ ${p.d}</span><button class="enq" data-enq="${c.name} – ${p.t}" data-img="${p.img}">Enquire →</button></div>
     </div>
   </article>`;
 }
