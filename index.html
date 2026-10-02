@@ -367,7 +367,7 @@ const $ = s => document.querySelector(s);
 const grad = g => `background:linear-gradient(135deg,${g[0]},${g[1]})`;
 const waLink = t => `https://wa.me/${WA}?text=${encodeURIComponent(t || 'Hi Raj Graphics, I need a printing quote.')}`;
 
-const HOME = ['visiting-cards','card-holders','pamphlets','tags','files','letter-heads','envelopes','digital','bags','bill-books','id-cards'];
+const HOME = ['visiting-cards','card-holders','pamphlets','tags','files','letter-heads','envelopes','digital','bags','bill-books','id-cards','stickers','pens','offset','targets'];
 const BEST = [['Visiting Cards','m-visiting'],['Flex Banners','m-flex'],['Stickers','m-stickers'],['ID Cards','m-idcard'],['Brochures','m-brochure']];
 // Placeholder testimonials — replace with real customer reviews before launch.
 const REVIEWS = [['Excellent quality and super fast delivery. Our visiting cards came out perfect!','Amit Shah','Small Business Owner'],['Very professional service. Printing quality is top-notch and prices are very reasonable.','Priya Patel','Event Manager'],['I have been using Raj Graphics for all our office printing needs. Highly recommended!','Rohit Mehta','Corporate Client']];
@@ -474,13 +474,13 @@ function category(slug){
   const count = groups.reduce((a,g) => a + g.items.length, 0);
   const [first, ...rest] = c.name.split(' ');
   const tpls = TPL[slug] || [];
-  const tabs = [...groups.map((g,i) => [`g${i}`, g.title]), ...tpls.map((t,i) => [`t${i}`, t.g])];
+  const tabs = [...tpls.map((t,i) => [`t${i}`, t.g]), ...groups.map((g,i) => [`g${i}`, g.title])];
   const others = CATS.filter(x => x.slug !== slug && x.m).slice(0, 5);
   return `
   <section class="lhero">
     <div>
       <div class="crumb"><a href="#/">Home</a> / <a href="#/" data-go="products">Products</a> / ${c.name}</div>
-      <span class="pill">✨ ${count} options available</span>
+      <span class="pill">✨ ${count + tpls.reduce((a,t) => a + t.items.length, 0)} options available</span>
       <h1>${rest.length ? `${first} <em>${rest.join(' ')}</em>` : `<em>${first}</em>`}</h1>
       <p>Premium ${c.name.toLowerCase()} with a free design check and fast turnaround. Share your requirement and get a quote in minutes.</p>
       <div class="ctas"><button class="btn btn-p" data-enq="${c.name}">Get a Quote →</button><a class="btn btn-o" href="#" data-wa>💬 Chat on WhatsApp</a></div>
@@ -493,11 +493,6 @@ function category(slug){
     <div class="art"><img ${c.m ? 'class="m" ' : ''}src="${img(c.m || c.img)}" alt="${c.name}"></div>
   </section>
   ${tabs.length > 1 ? `<div class="chips">${tabs.map(([id,t],i) => `<a class="chip${i ? '' : ' on'}" href="#" data-jump="${id}">${t}</a>`).join('')}</div>` : ''}
-  ${groups.map((g,i) => `
-  <section class="grp" id="g${i}">
-    <div class="grp-h"><div><h2>${g.title}</h2><p>${g.items.length} options · price shared on enquiry</p></div><span class="qty">${g.qty}</span></div>
-    <div class="prods">${g.items.map((p,j) => card(p, g, c, i, j)).join('')}</div>
-  </section>`).join('')}
   ${tpls.map((t,i) => `
   <section class="grp" id="t${i}">
     <div class="grp-h"><div><h2>${t.g}</h2><p>${t.items.length} ready designs · we customise with your details</p></div><span class="qty">Free customisation</span></div>
@@ -507,6 +502,11 @@ function category(slug){
         <div class="bd"><span title="${n}">${n}</span><button class="enq" data-enq="${c.name} – design ${n}" data-img="${src}">Use →</button></div>
       </article>`).join('')}</div>
     ${t.items.length > TPL_PAGE ? `<div class="more"><button class="btn btn-o" data-more>Show all ${t.items.length} designs ↓</button></div>` : ''}
+  </section>`).join('')}
+  ${groups.map((g,i) => `
+  <section class="grp" id="g${i}">
+    <div class="grp-h"><div><h2>${g.title}</h2><p>${g.items.length} options · price shared on enquiry</p></div><span class="qty">${g.qty}</span></div>
+    <div class="prods">${g.items.map((p,j) => card(p, g, c, i, j)).join('')}</div>
   </section>`).join('')}
   <div class="sec"><div><h2>Explore More Categories</h2><p>Everything your business needs, printed under one roof.</p></div><a class="btn btn-o" href="#/" data-go="products">View All Products →</a></div>
   <div class="cats">${catCards(others)}</div>
