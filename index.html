@@ -70,6 +70,8 @@ nav.main a:hover{background:#f1f1fb;color:var(--navy)}
 .cat h3{font-size:15.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .cat .meta{font-size:12.5px;color:var(--muted);display:flex;gap:10px;grid-column:1;white-space:nowrap}
 .cat .meta b{color:var(--pink)}
+.cats4{grid-template-columns:repeat(4,1fr)}
+.cats4 .cat .ph{aspect-ratio:16/9}
 .cat .go{grid-column:2;grid-row:1/3;width:38px;height:38px;border-radius:50%;border:1px solid var(--line);display:grid;place-items:center;font-weight:700;transition:.2s}
 .cat:hover .go{background:var(--pink);color:#fff;border-color:var(--pink)}
 
@@ -111,6 +113,7 @@ nav.main a:hover{background:#f1f1fb;color:var(--navy)}
 .prod .media{position:relative;aspect-ratio:16/10;overflow:hidden}
 .prod .media img{width:100%;height:100%;object-fit:cover;transition:transform .5s}
 .prod:hover .media img{transform:scale(1.05)}
+.prod .media img.fit{object-fit:contain;padding:10px}
 .prod .tile{display:grid;place-items:center;text-align:center;padding:16px;height:100%}
 .prod .tile .card3d{width:62%;aspect-ratio:1.75;border-radius:10px;display:grid;place-items:center;color:#fff;box-shadow:0 18px 30px rgba(20,22,50,.22);transform:rotate(-6deg);transition:transform .4s;padding:10px}
 .prod:hover .tile .card3d{transform:rotate(0) scale(1.04)}
@@ -294,18 +297,21 @@ footer .brand{margin-bottom:12px;color:var(--ink)}
 <script src="templates.js"></script>
 <script>
 const WA = '919800000000';
-const img = n => `img/${n}.jpg`;
+const img = n => n.startsWith('img/') ? n : `img/${n}.jpg`;
+const tplImg = (slug, j) => { const all = (TPL[slug] || []).flatMap(g => g.items); return all.length ? all[Math.floor(j * all.length / 4)][1] : null; };
 
 const CATS = [
   {slug:'visiting-cards',m:'m-visiting',name:'Visiting Cards',img:'visiting',days:'1–3 days',tag:'Most popular'},
+  {slug:'die-cut-cards',m:'cover/die-cut-cards',name:'Die Cut Visiting Cards',img:'v-velvet',days:'3–5 days',tag:'Unique shapes'},
+  {slug:'uv-texture',m:'cover/uv-texture',name:'UV Texture Cards',img:'v-spotuv',days:'3 days'},
   {slug:'letter-heads',m:'m-letter',name:'Letter Heads',img:'letter',days:'1–3 days'},
   {slug:'envelopes',m:'m-env',name:'Envelopes',img:'env',days:'3 days'},
   {slug:'pamphlets',m:'m-poster',name:'Pamphlet / Posters',img:'poster',days:'2 days'},
-  {slug:'stickers',name:'Stickers & Labels',img:'sticker',days:'2 days'},
-  {slug:'tags',m:'m-tags',name:'Tags',img:'tags',days:'3 days'},
-  {slug:'files',m:'m-folder',name:'Files',img:'folder',days:'4 days'},
+  {slug:'stickers',m:'cover/stickers',name:'Stickers',img:'sticker',days:'2 days'},
+  {slug:'tags',m:'m-tags',name:'Garments Tags',img:'tags',days:'3 days'},
+  {slug:'files',m:'m-folder',name:'Doctor Files',img:'folder',days:'4 days'},
   {slug:'bill-books',m:'m-bill',name:'Bill Books',img:'bill',days:'3 days'},
-  {slug:'bags',m:'m-pouch',name:'ATM Pouches',img:'pouch',days:'5 days',tag:'New'},
+  {slug:'bags',m:'m-pouch',name:'ATM Pouches',img:'pouch',days:'5 days'},
   {slug:'card-holders',m:'m-holder',name:'Card Holders',img:'holder',days:'3 days'},
   {slug:'pens',name:'Branded Pens',img:'pen',days:'5 days'},
   {slug:'digital',m:'m-digital',name:'Digital Paper Printing',img:'digital',days:'Same day',tag:'Fast'},
@@ -344,6 +350,8 @@ const VC = [
 ];
 
 const V = {
+  'die-cut-cards':[['Custom Die Shape','36+ die shapes available'],['Metal Die-cut','Laser-cut steel cards','v-metal'],['Rounded Die','Soft corners & ovals'],['Leaf & Badge Dies','Creative industry shapes']],
+  'uv-texture':[['Spot UV Texture','Raised gloss pattern on matt','v-spotuv'],['Full UV Texture','Textured all-over finish'],['UV + Foil','Texture with gold foil','v-foil'],['Velvet + UV','Soft touch with gloss','v-velvet']],
   'id-cards':[['PVC ID Card','CR80 size, single or double side'],['ID Card + Lanyard','Printed lanyard with hook'],['Employee ID','Photo, name and barcode'],['School ID','Bulk names from Excel']],
   'letter-heads':[['Classic Letterhead','100 GSM bond, single/double side'],['Premium Textured','Laid / linen finish 120 GSM'],['With Matching Envelope','Complete stationery kit'],['Wedding Stationery','Invites, menus & place cards','v-wedding']],
   'envelopes':[['Cloth-lined','Strong courier envelopes'],['Window Envelope','DL / 10×4.5 with window'],['Kraft Envelope','Eco brown, custom print','v-stationery'],['Invitation Envelope','Pearl & metallic sheets']],
@@ -367,7 +375,7 @@ const $ = s => document.querySelector(s);
 const grad = g => `background:linear-gradient(135deg,${g[0]},${g[1]})`;
 const waLink = t => `https://wa.me/${WA}?text=${encodeURIComponent(t || 'Hi Raj Graphics, I need a printing quote.')}`;
 
-const HOME = ['visiting-cards','card-holders','pamphlets','tags','files','letter-heads','envelopes','digital','bags','bill-books','id-cards','stickers','pens','offset','targets'];
+const HOME = ['visiting-cards','die-cut-cards','letter-heads','envelopes','bill-books','bags','files','uv-texture','tags','stickers','id-cards'];
 const BEST = [['Visiting Cards','m-visiting'],['Flex Banners','m-flex'],['Stickers','m-stickers'],['ID Cards','m-idcard'],['Brochures','m-brochure']];
 // Placeholder testimonials — replace with real customer reviews before launch.
 const REVIEWS = [['Excellent quality and super fast delivery. Our visiting cards came out perfect!','Amit Shah','Small Business Owner'],['Very professional service. Printing quality is top-notch and prices are very reasonable.','Priya Patel','Event Manager'],['I have been using Raj Graphics for all our office printing needs. Highly recommended!','Rohit Mehta','Corporate Client']];
@@ -395,7 +403,7 @@ function home(q){
   </section>
 
   <div class="sec" id="products"><div><h2>Shop by Category</h2><p>Choose from a wide range of printing products. Great quality, best prices and fast delivery.</p></div><a class="btn btn-o" href="#/c/visiting-cards">View All Products →</a></div>
-  <div class="cats">${catCards(HOME.map(s => CATS.find(c => c.slug === s)))}</div>
+  <div class="cats cats4">${catCards(HOME.map(s => CATS.find(c => c.slug === s)))}</div>
 
   <section class="band" id="why">
     <div class="sec"><div><h2>Why Choose Raj Graphics?</h2><p>We make printing simple, fast and hassle-free for businesses of all sizes.</p></div></div>
@@ -444,7 +452,7 @@ const catCards = list => list.map((c, i) => `
   <a class="cat" href="#/c/${c.slug}">
     ${c.tag ? `<span class="tag">${c.tag}</span>` : ''}
     <div class="ph c${i % 5}"><img loading="lazy" src="${img(c.m || c.img)}" alt="${c.name}"></div>
-    <div class="bd"><h3>${c.name}</h3><span class="go">→</span><div class="meta"><span>⏱ ${c.days}</span><b>Get a quote</b></div></div>
+    <div class="bd"><h3>${c.name}</h3><span class="go">→</span><div class="meta"><span>⏱ ${c.days}</span>${TPL[c.slug] ? `<b>${TPL[c.slug].reduce((a,g) => a + g.items.length, 0)} designs</b>` : '<b>Get a quote</b>'}</div></div>
   </a>`).join('');
 
 function contact(){
@@ -470,7 +478,7 @@ function fields(product){
 
 function category(slug){
   const c = CATS.find(x => x.slug === slug) || CATS[0];
-  const groups = slug === 'visiting-cards' ? VC : [{title:`${c.name} variants`,qty:'Custom quantity',c:['#e6157f','#2b2d8f'],items:(V[slug] || []).map(([t,f,im]) => ({t,f,img:im || c.img,d:c.days}))}];
+  const groups = slug === 'visiting-cards' ? VC : [{title:`${c.name} variants`,qty:'Custom quantity',c:['#e6157f','#2b2d8f'],items:(V[slug] || []).map(([t,f,im],j) => ({t,f,img:im || tplImg(slug, j) || c.m || c.img,d:c.days}))}];
   const count = groups.reduce((a,g) => a + g.items.length, 0);
   const [first, ...rest] = c.name.split(' ');
   const tpls = TPL[slug] || [];
@@ -516,7 +524,7 @@ function category(slug){
 function card(p, g, c, i, j){
   const label = `${c.name} – ${p.t}${p.sub ? ' (' + p.sub + ')' : ''}`;
   const media = p.img
-    ? `<img loading="lazy" src="${img(p.img)}" alt="${p.t}">${p.o ? `<span class="badge">${p.o.length} options</span>` : ''}`
+    ? `<img loading="lazy" src="${img(p.img)}" alt="${p.t}"${/^(img\/t\/|m-|cover\/)/.test(p.img) ? ` class="fit" style="background:${PASTEL[j % 5]}"` : ''}>${p.o ? `<span class="badge">${p.o.length} options</span>` : ''}`
     : `<div class="tile" style="background:${PASTEL[j % 5]}"><div class="card3d" style="${grad(g.c || OPTC[i % 4])}"><div><strong>${p.t.replace(' + ','<br>+ ')}</strong>${p.sub ? `<small>${p.sub}</small>` : ''}</div></div></div>`;
   return `<article class="prod">
     <div class="media">${p.n ? '<span class="ribbon">NEW</span>' : ''}${media}</div>
@@ -560,7 +568,7 @@ document.addEventListener('click', e => {
   else if (t.dataset.enq !== undefined) {
     e.preventDefault();
     $('#dtitle').textContent = t.dataset.enq || 'Get a quote';
-    $('#dimg').src = t.dataset.img?.includes('/') ? t.dataset.img : img(t.dataset.img || 'visiting');
+    $('#dimg').src = img(t.dataset.img || 'visiting');
     $('#dform').innerHTML = fields(t.dataset.enq);
     dlg.showModal();
   }
