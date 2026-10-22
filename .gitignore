@@ -11,3 +11,4 @@ node_modules/
 next-env.d.ts
 design/preview.html
 design/content/
+.dev.vars*
