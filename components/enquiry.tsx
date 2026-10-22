@@ -1,13 +1,13 @@
 "use client";
 
 import { createContext, useContext, useRef, useState, type FormEvent, type MouseEvent, type ReactNode } from "react";
-import { CATS, img, waLink } from "@/lib/catalog";
+import { img, waLink } from "@/lib/site";
 
 type Enquiry = { product: string; image?: string };
 
-const EnquiryContext = createContext<(e: Enquiry) => void>(() => {});
+const EnquiryContext = createContext<{ open: (e: Enquiry) => void; names: string[] }>({ open: () => {}, names: [] });
 
-export function EnquiryProvider({ children }: { children: ReactNode }) {
+export function EnquiryProvider({ names, children }: { names: string[]; children: ReactNode }) {
   const dlg = useRef<HTMLDialogElement>(null);
   const [state, setState] = useState<Enquiry & { n: number }>({ product: "", n: 0 });
 
@@ -18,11 +18,11 @@ export function EnquiryProvider({ children }: { children: ReactNode }) {
   const close = () => dlg.current?.close();
 
   return (
-    <EnquiryContext.Provider value={open}>
+    <EnquiryContext.Provider value={{ open, names }}>
       {children}
       <dialog ref={dlg} onClick={(e) => e.target === dlg.current && close()}>
         <div className="mh">
-          <img src={img(state.image || "visiting")} alt="" />
+          <img src={img(state.image || "visiting.jpg")} alt="" />
           <div>
             <b>{state.product || "Get a quote"}</b>
             <span>We reply within 30 minutes in working hours</span>
@@ -36,7 +36,7 @@ export function EnquiryProvider({ children }: { children: ReactNode }) {
 }
 
 export function EnquireButton({ product = "", image, className, link, children }: { product?: string; image?: string; className?: string; link?: boolean; children: ReactNode }) {
-  const open = useContext(EnquiryContext);
+  const { open } = useContext(EnquiryContext);
   const onClick = (e: MouseEvent) => {
     e.preventDefault();
     open({ product, image });
@@ -54,8 +54,9 @@ const formText = (f: HTMLFormElement) => {
 };
 
 export function EnquiryForm({ product = "", onSent }: { product?: string; onSent?: () => void }) {
+  const { names } = useContext(EnquiryContext);
   const [sent, setSent] = useState(false);
-  const match = product ? CATS.find((c) => product.startsWith(c.name)) : undefined;
+  const match = product ? names.find((n) => product.startsWith(n)) : undefined;
 
   const submit = (e: FormEvent) => {
     e.preventDefault();
@@ -72,9 +73,9 @@ export function EnquiryForm({ product = "", onSent }: { product?: string; onSent
       <label className="f">Name<input required name="name" placeholder="Your name" /></label>
       <label className="f">Mobile<input required name="phone" type="tel" pattern="[0-9+ ]{10,14}" placeholder="10-digit mobile" /></label>
       <label className="f full">Product
-        <select name="product" defaultValue={match ? match.name : product}>
+        <select name="product" defaultValue={match ?? product}>
           <option value="">Select product</option>
-          {CATS.map((c) => <option key={c.slug}>{c.name}</option>)}
+          {names.map((n) => <option key={n}>{n}</option>)}
           {product && !match && <option>{product}</option>}
         </select>
       </label>

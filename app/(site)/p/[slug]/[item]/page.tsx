@@ -1,37 +1,43 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { notFound } from "next/navigation";
+import { notFound, permanentRedirect } from "next/navigation";
 import { Contact } from "@/components/contact";
 import { EnquireButton } from "@/components/enquiry";
-import { CATS, V, findCategory, img, products, waLink } from "@/lib/catalog";
+import { products, type CategoryDetail, type Product } from "@/lib/catalog";
+import { img, waLink } from "@/lib/site";
+import { loadCategory } from "@/lib/site-data";
 
-type Params = { params: Promise<{ slug: string; i: string }> };
+type Params = { params: Promise<{ slug: string; item: string }> };
 
-export const dynamicParams = false;
+type Loaded = { redirect: string } | { c: CategoryDetail; list: Product[]; n: number; p: Product };
 
-export const generateStaticParams = () => CATS.flatMap((c) => products(c).map((_, i) => ({ slug: c.slug, i: String(i) })));
-
-const load = async (params: Params["params"]) => {
-  const { slug, i } = await params;
-  const c = findCategory(slug);
-  const list = c ? products(c) : [];
-  const n = Number(i);
-  return c && list[n] ? { c, list, n, p: list[n] } : undefined;
+const load = async (params: Params["params"]): Promise<Loaded | undefined> => {
+  const { slug, item } = await params;
+  const c = await loadCategory(slug);
+  if (!c) return undefined;
+  const list = products(c);
+  if (/^\d+$/.test(item)) {
+    const legacy = list[Number(item)];
+    return legacy && { redirect: `/p/${c.slug}/${legacy.key}` };
+  }
+  const n = list.findIndex((p) => p.key === item);
+  return n < 0 ? undefined : { c, list, n, p: list[n] };
 };
 
 export async function generateMetadata({ params }: Params): Promise<Metadata> {
   const d = await load(params);
-  return { title: d && `${d.p.t} — ${d.c.name} — Raj Graphics` };
+  return { title: d && "p" in d ? `${d.p.t} — ${d.c.name} — Raj Graphics` : undefined };
 }
 
 export default async function ProductPage({ params }: Params) {
   const d = await load(params);
   if (!d) notFound();
+  if ("redirect" in d) permanentRedirect(d.redirect);
   const { c, list, n, p } = d;
 
   const label = `${c.name} – ${p.design ? "design " : ""}${p.t}`;
   const related = list.map((x, k) => ({ ...x, k })).filter((x) => x.group === p.group && x.k !== n).slice(0, 4);
-  const opts = (V[c.slug] || []).map((v) => v[0]);
+  const opts = c.variants.map((v) => v.title);
 
   return (
     <>
@@ -44,7 +50,7 @@ export default async function ProductPage({ params }: Params) {
           <div className="sub">{c.name}</div>
           <p className="desc">{p.f || `A ready-made ${c.name.toLowerCase()} design. We customise it with your name, logo and contact details for free, check the file, and print it on the paper and finish you choose.`}</p>
           <div className="specs">
-            <div><b>{c.days}</b>Turnaround</div>
+            <div><b>{c.turnaround}</b>Turnaround</div>
             <div><b>{p.design ? "Free" : "Available"}</b>{p.design ? "Design customisation" : "Design support"}</div>
             <div><b>On enquiry</b>Price &amp; quantity</div>
             <div><b>Pan India</b>Safe delivery</div>
@@ -60,8 +66,8 @@ export default async function ProductPage({ params }: Params) {
             <a className="btn btn-o" href={waLink(`Hi Raj Graphics, I'm interested in ${label}.`)} target="_blank" rel="noopener">💬 WhatsApp</a>
           </div>
           <div className="pn">
-            {n > 0 ? <Link className="btn btn-o" href={`/p/${c.slug}/${n - 1}`}>← {list[n - 1].t}</Link> : <span />}
-            {n < list.length - 1 && <Link className="btn btn-o" href={`/p/${c.slug}/${n + 1}`}>{list[n + 1].t} →</Link>}
+            {n > 0 ? <Link className="btn btn-o" href={`/p/${c.slug}/${list[n - 1].key}`}>← {list[n - 1].t}</Link> : <span />}
+            {n < list.length - 1 && <Link className="btn btn-o" href={`/p/${c.slug}/${list[n + 1].key}`}>{list[n + 1].t} →</Link>}
           </div>
         </div>
       </section>
@@ -73,7 +79,7 @@ export default async function ProductPage({ params }: Params) {
           </div>
           <div className="tpls">
             {related.map((r) => (
-              <Link key={r.k} className="tpl" href={`/p/${c.slug}/${r.k}`}>
+              <Link key={r.key} className="tpl" href={`/p/${c.slug}/${r.key}`}>
                 <div className={`ph c${r.k % 5}`}><img loading="lazy" src={img(r.img)} alt={r.t} /></div>
                 <div className="bd"><span>{r.t}</span><span className="go-v">View →</span></div>
               </Link>

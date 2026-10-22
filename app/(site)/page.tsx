@@ -2,12 +2,15 @@ import Link from "next/link";
 import { CatCards } from "@/components/cat-cards";
 import { EnquireButton } from "@/components/enquiry";
 import { NewsForm } from "@/components/news-form";
-import { BEST, CATS, HOME, REVIEWS, findCategory, img, waLink, type Category } from "@/lib/catalog";
+import { homeCards } from "@/lib/catalog";
+import { BEST, REVIEWS, img, waLink } from "@/lib/site";
+import { loadCategoryCards } from "@/lib/site-data";
 
 export default async function Home({ searchParams }: { searchParams: Promise<{ q?: string }> }) {
   const q = ((await searchParams).q ?? "").trim().toLowerCase();
+  const cards = await loadCategoryCards();
   if (q) {
-    const list = CATS.filter((c) => c.name.toLowerCase().includes(q));
+    const list = cards.filter((c) => c.name.toLowerCase().includes(q));
     return (
       <>
         <div className="sec"><div><h2>Results for “{q}”</h2></div></div>
@@ -36,14 +39,14 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ q
             <div><i className="i-peach">👥</i><span><b>45,000+</b>Happy Customers</span></div>
           </div>
         </div>
-        <div className="hero-art"><img src={img("m-hero")} alt="Raj Graphics printed products" /></div>
+        <div className="hero-art"><img src={img("m-hero.jpg")} alt="Raj Graphics printed products" /></div>
       </section>
 
       <div className="sec" id="products">
         <div><h2>Shop by Category</h2><p>Choose from a wide range of printing products. Great quality, best prices and fast delivery.</p></div>
         <Link className="btn btn-o" href="/c/visiting-cards">View All Products →</Link>
       </div>
-      <div className="cats cats4"><CatCards list={HOME.map(findCategory).filter((c): c is Category => !!c)} /></div>
+      <div className="cats cats4"><CatCards list={homeCards(cards)} /></div>
 
       <section className="band" id="why">
         <div className="sec"><div><h2>Why Choose Raj Graphics?</h2><p>We make printing simple, fast and hassle-free for businesses of all sizes.</p></div></div>
@@ -70,7 +73,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ q
           <p>Make a lasting impression with professional printing solutions.</p>
           <EnquireButton className="btn btn-p" product="Custom printing">Start Customized Enquiry →</EnquireButton>
         </div>
-        <img src={img("m-custom")} alt="Custom branded bag, cup, box and notebook" />
+        <img src={img("m-custom.jpg")} alt="Custom branded bag, cup, box and notebook" />
         <ul className="checks"><li>Custom Sizes &amp; Shapes</li><li>Multiple Paper Options</li><li>Bulk Order Discounts</li><li>Design Support Available</li></ul>
       </section>
 
