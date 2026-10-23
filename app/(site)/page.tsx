@@ -4,11 +4,11 @@ import { EnquireButton } from "@/components/enquiry";
 import { NewsForm } from "@/components/news-form";
 import { homeCards } from "@/lib/catalog";
 import { BEST, REVIEWS, img, waLink } from "@/lib/site";
-import { loadCategoryCards } from "@/lib/site-data";
+import { loadCategoryCards, loadStore } from "@/lib/site-data";
 
 export default async function Home({ searchParams }: { searchParams: Promise<{ q?: string }> }) {
   const q = ((await searchParams).q ?? "").trim().toLowerCase();
-  const cards = await loadCategoryCards();
+  const [cards, store] = await Promise.all([loadCategoryCards(), loadStore()]);
   if (q) {
     const list = cards.filter((c) => c.name.toLowerCase().includes(q));
     return (
@@ -30,7 +30,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ q
           <p>Premium printing at affordable prices. Share your design, get a quick quote and doorstep delivery – all in one place.</p>
           <div className="ctas">
             <EnquireButton className="btn btn-p">Get a Quote →</EnquireButton>
-            <a className="btn btn-o" href={waLink()} target="_blank" rel="noopener">💬 Chat on WhatsApp</a>
+            <a className="btn btn-o" href={waLink(store.whatsapp)} target="_blank" rel="noopener">💬 Chat on WhatsApp</a>
           </div>
           <div className="feats">
             <div><i className="i-violet">⚡</i><span><b>12 Hours</b>Fastest Turnaround</span></div>

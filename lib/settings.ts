@@ -3,6 +3,7 @@ import { z } from "zod";
 import type { Db } from "@/db";
 import { settings, type Seller } from "@/db/schema";
 import { gstinSchema } from "@/lib/admin-orders";
+import { normalizePhone } from "@/lib/order-format";
 import { STATES } from "@/lib/gst";
 
 const text = (maxLen: number) => z.string().trim().max(maxLen);
@@ -36,4 +37,58 @@ export async function getSeller(db: Db): Promise<Seller> {
 export async function saveSeller(db: Db, input: z.input<typeof sellerSchema>) {
   const value = sellerSchema.parse(input);
   await db.insert(settings).values({ key: "billing", value }).onConflictDoUpdate({ target: settings.key, set: { value, updatedAt: new Date() } });
+}
+
+const url = z.union([z.literal(""), z.string().trim().max(200).regex(/^https:\/\/[^\s]+$/, "Links must start with https://")]);
+
+export const storeSchema = z.object({
+  name: text(60).min(1, "Business name is required"),
+  tagline: text(60),
+  about: text(300),
+  phone: text(40),
+  whatsapp: z.string().transform((v, ctx) => {
+    const p = normalizePhone(v);
+    if (!p) ctx.addIssue({ code: "custom", message: "Enter the WhatsApp number with country code, e.g. 91 98250 12345" });
+    return p ?? "";
+  }),
+  email: z.union([z.literal(""), z.email("Enter a valid email")]),
+  address: text(200),
+  hours: text(80),
+  facebook: url,
+  instagram: url,
+  youtube: url,
+  linkedin: url,
+  seoTitle: text(70).min(1, "Page title is required"),
+  seoDescription: text(160),
+});
+
+export type Store = z.output<typeof storeSchema>;
+
+export const PLACEHOLDER_WA = "919800000000";
+
+export const DEFAULT_STORE: Store = {
+  name: "Raj Graphics",
+  tagline: "THE PERFECTION OF PRINTING",
+  about: "Your trusted printing partner for high-quality printing solutions at the best prices. Serving businesses across India.",
+  phone: "+91 98XXX XXXXX",
+  whatsapp: PLACEHOLDER_WA,
+  email: "hello@rajgraphics.in",
+  address: "City, State, India",
+  hours: "Mon – Sat: 10:00 AM – 8:00 PM",
+  facebook: "",
+  instagram: "",
+  youtube: "",
+  linkedin: "",
+  seoTitle: "Raj Graphics — The Perfection of Printing",
+  seoDescription: "Visiting cards, wedding invitations, newspaper ads, pamphlets and all printing at the best prices. Quick quote on WhatsApp.",
+};
+
+export async function getStore(db: Db): Promise<Store> {
+  const row = await db.query.settings.findFirst({ where: eq(settings.key, "store") });
+  return { ...DEFAULT_STORE, ...(row?.value as Partial<Store> | undefined) };
+}
+
+export async function saveStore(db: Db, input: z.input<typeof storeSchema>) {
+  const value = storeSchema.parse(input);
+  await db.insert(settings).values({ key: "store", value }).onConflictDoUpdate({ target: settings.key, set: { value, updatedAt: new Date() } });
 }

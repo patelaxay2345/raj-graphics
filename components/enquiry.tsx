@@ -7,9 +7,9 @@ import { img, waLink } from "@/lib/site";
 
 type Enquiry = { product: string; image?: string };
 
-const EnquiryContext = createContext<{ open: (e: Enquiry) => void; names: string[]; siteKey: string | null }>({ open: () => {}, names: [], siteKey: null });
+const EnquiryContext = createContext<{ open: (e: Enquiry) => void; names: string[]; siteKey: string | null; wa: string }>({ open: () => {}, names: [], siteKey: null, wa: "" });
 
-export function EnquiryProvider({ names, siteKey, children }: { names: string[]; siteKey: string | null; children: ReactNode }) {
+export function EnquiryProvider({ names, siteKey, wa, children }: { names: string[]; siteKey: string | null; wa: string; children: ReactNode }) {
   const dlg = useRef<HTMLDialogElement>(null);
   const [state, setState] = useState<Enquiry & { n: number }>({ product: "", n: 0 });
 
@@ -20,7 +20,7 @@ export function EnquiryProvider({ names, siteKey, children }: { names: string[];
   const close = () => dlg.current?.close();
 
   return (
-    <EnquiryContext.Provider value={{ open, names, siteKey }}>
+    <EnquiryContext.Provider value={{ open, names, siteKey, wa }}>
       {children}
       <dialog ref={dlg} onClick={(e) => e.target === dlg.current && close()}>
         <div className="mh">
@@ -56,7 +56,7 @@ const formText = (f: HTMLFormElement) => {
 };
 
 export function EnquiryForm({ product = "", source = "quote", onSent }: { product?: string; source?: "quote" | "contact"; onSent?: () => void }) {
-  const { names, siteKey } = useContext(EnquiryContext);
+  const { names, siteKey, wa } = useContext(EnquiryContext);
   const [state, dispatch, pending] = useActionState(submitEnquiry, {});
   const form = useRef<HTMLFormElement>(null);
   const match = product ? names.find((n) => product.startsWith(n)) : undefined;
@@ -77,7 +77,7 @@ export function EnquiryForm({ product = "", source = "quote", onSent }: { produc
   };
   const whatsapp = (e: MouseEvent<HTMLButtonElement>) => {
     const f = e.currentTarget.form!;
-    if (f.reportValidity()) window.open(waLink(formText(f)), "_blank", "noopener");
+    if (f.reportValidity()) window.open(waLink(wa, formText(f)), "_blank", "noopener");
   };
 
   return (
