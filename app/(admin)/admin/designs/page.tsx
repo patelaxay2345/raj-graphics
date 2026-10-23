@@ -1,10 +1,10 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { DesignGrid } from "@/components/admin/design-grid";
 import { TopBar } from "@/components/admin/top-bar";
 import { Uploader } from "@/components/admin/uploader";
 import { getDb } from "@/db";
 import { getDesignCategory, listDesignCategories } from "@/lib/admin-catalog";
-import { img } from "@/lib/site";
 
 export default async function DesignsPage({ searchParams }: { searchParams: Promise<{ c?: string; g?: string }> }) {
   const db = getDb();
@@ -52,21 +52,7 @@ export default async function DesignsPage({ searchParams }: { searchParams: Prom
               <Uploader groupId={group.id} groupTitle={group.title} />
             </section>
 
-            <section className="card">
-              <div className="card-hd"><h2>{group.title}</h2><span>{group.designs.length} designs</span></div>
-              {group.designs.length ? (
-                <div className="grid">
-                  {group.designs.map((d) => (
-                    <figure key={d.id} className={d.active ? "tile" : "tile hid"}>
-                      <img src={img(d.imageKey)} alt={`Design ${d.code}`} loading="lazy" />
-                      <small><span className="mono">{d.code}</span>{!d.active && <span>Hidden</span>}</small>
-                    </figure>
-                  ))}
-                </div>
-              ) : (
-                <p className="empty">No designs in this group yet. Upload some above.</p>
-              )}
-            </section>
+            <DesignGrid key={group.id} groupId={group.id} groups={cat.groups.map((g) => ({ id: g.id, title: g.title }))} designs={group.designs} />
           </>
         ) : (
           <section className="card"><p className="empty">{cat ? `${cat.name} has no design groups yet. Groups are added from the category editor.` : "No categories yet."}</p></section>

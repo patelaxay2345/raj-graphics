@@ -1,5 +1,5 @@
 import { ActionForm } from "@/components/admin/action-form";
-import type { ActionState } from "@/app/(admin)/admin/categories/actions";
+import type { ActionState } from "@/lib/admin-action";
 
 type Values = { id?: number; name: string; slug: string; turnaround: string; tag: string | null; description: string; designPrefix: string; nextDesignNo?: number };
 

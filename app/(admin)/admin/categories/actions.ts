@@ -1,13 +1,10 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { z, ZodError } from "zod";
+import { z } from "zod";
 import { getDb } from "@/db";
 import * as cat from "@/lib/admin-categories";
-import { requireOwner } from "@/lib/owner";
-
-export type ActionState = { error?: string; saved?: number };
+import { runAdminAction as run, type ActionState } from "@/lib/admin-action";
 
 const id = z.coerce.number().int().positive();
 const dir = z.enum(["-1", "1"]).transform((d) => (d === "1" ? 1 : -1) as 1 | -1);
@@ -23,19 +20,6 @@ const details = (fd: FormData) => ({
   description: field(fd, "description"),
   designPrefix: field(fd, "designPrefix"),
 });
-
-async function run(fn: () => Promise<unknown>): Promise<ActionState> {
-  await requireOwner();
-  try {
-    await fn();
-  } catch (e) {
-    if (e instanceof cat.AdminError) return { error: e.message };
-    if (e instanceof ZodError) return { error: e.issues.map((i) => i.message).join(". ") };
-    throw e;
-  }
-  revalidatePath("/admin", "layout");
-  return { saved: Date.now() };
-}
 
 export async function createCategoryAction(_: ActionState, fd: FormData): Promise<ActionState> {
   let created = 0;
