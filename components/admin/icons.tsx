@@ -8,3 +8,6 @@ export const IconTrash = () => <svg {...base}><path d="M3 6h18M8 6V4h8v2M6 6l1 1
 export const IconPlus = () => <svg {...base}><path d="M12 5v14M5 12h14" /></svg>;
 export const IconBack = () => <svg {...base}><path d="m15 18-6-6 6-6" /></svg>;
 export const IconSearch = () => <svg {...base}><circle cx="11" cy="11" r="7" /><path d="m20 20-3.5-3.5" /></svg>;
+export const IconCheck = () => <svg {...base}><path d="M20 6 9 17l-5-5" /></svg>;
+export const IconUndo = () => <svg {...base}><path d="M3 12a9 9 0 1 0 3-6.7L3 8M3 3v5h5" /></svg>;
+export const IconChat = () => <svg {...base}><path d="M21 12a8 8 0 0 1-11.8 7L3 21l2-5.6A8 8 0 1 1 21 12z" /></svg>;
