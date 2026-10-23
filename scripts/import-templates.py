@@ -1,13 +1,13 @@
 """Import design templates from design/content (data-full.json or data.json + images) into the site.
 
-Writes web-ready sRGB thumbnails to design/img/t/<category>/ and design/templates.js.
+Writes web-ready sRGB thumbnails to public/img/t/<category>/ and data/templates.json.
 """
 import json, os, subprocess
 from urllib.parse import unquote
 
-ROOT = os.path.join(os.path.dirname(__file__), '..', 'design')
-SRC = os.path.join(ROOT, 'content')
-OUT = os.path.join(ROOT, 'img', 't')
+REPO = os.path.join(os.path.dirname(__file__), '..')
+ROOT = os.path.join(REPO, 'public')
+SRC = os.path.join(REPO, 'design', 'content')
 
 # source category slug -> site category slug (one site category per Printers Club category)
 MAP = {
@@ -53,11 +53,11 @@ for c in data['categories']:
             n += 1
             dest = f"img/t/{site}/{n}.jpg"
             thumb(os.path.join(SRC, rel), dest)
-            items.append([d['name'], dest])
+            items.append([d['name'], '/' + dest])
         if items:
             tpl.setdefault(site, []).append({'g': title, 'items': items})
     counts[site] = (n, c['count'])
 
-with open(os.path.join(ROOT, 'templates.js'), 'w') as f:
-    f.write('const TPL = ' + json.dumps(tpl, ensure_ascii=False, separators=(',', ':')) + ';\n')
+with open(os.path.join(REPO, 'data', 'templates.json'), 'w') as f:
+    json.dump(tpl, f, ensure_ascii=False, separators=(',', ':'))
 print(counts)
