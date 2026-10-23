@@ -16,6 +16,12 @@
       "migrations_dir": "drizzle"
     }
   ],
+  "r2_buckets": [
+    {
+      "binding": "MEDIA",
+      "bucket_name": "raj-graphics-media"
+    }
+  ],
   "services": [
     {
       "binding": "WORKER_SELF_REFERENCE",

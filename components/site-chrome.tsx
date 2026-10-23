@@ -8,7 +8,7 @@ const TRACK = waLink("Hi Raj Graphics, I want to check the status of my order.")
 
 function Brand({ alt }: { alt: string }) {
   return (
-    <Link href="/" className="brand"><img src="/img/logo.png" alt={alt} /><span>Raj Graphics<small>THE PERFECTION OF PRINTING</small></span></Link>
+    <Link href="/" className="brand"><img src="/logo.png" alt={alt} /><span>Raj Graphics<small>THE PERFECTION OF PRINTING</small></span></Link>
   );
 }
 
