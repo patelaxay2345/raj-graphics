@@ -3,6 +3,7 @@ import type { Db } from "@/db";
 import { getTableColumns } from "drizzle-orm";
 import type { SQLiteTable } from "drizzle-orm/sqlite-core";
 import { categories, designGroups, designs, variants } from "@/db/schema";
+import { designNumbering } from "@/lib/designs";
 
 type SeedCategory = { slug: string; name: string; img: string; days: string; m?: string; tag?: string };
 
@@ -69,6 +70,7 @@ export function catalogRows() {
     sort: i,
     showOnHome: HOME.includes(c.slug),
     homeSort: Math.max(HOME.indexOf(c.slug), 0),
+    ...designNumbering(c.slug, (TPL[c.slug] ?? []).flatMap((g) => g.items.map(([code]) => code))),
   }));
   const vars = cats.flatMap((c) => (V[c.slug] ?? []).map(([title, feature, im], sort) => ({ categoryId: c.id, title, feature, imageKey: im ? key(im) : null, sort })));
   const groups = cats.flatMap((c) => (TPL[c.slug] ?? []).map((g, sort) => ({ categoryId: c.id, title: g.g, sort, items: g.items })));
