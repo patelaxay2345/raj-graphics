@@ -10,6 +10,8 @@ import { getOrder } from "@/lib/admin-orders";
 import { orderMessage, orderNo, showPhone, toRupees } from "@/lib/order-format";
 import { setOrderStatusAction } from "../actions";
 import { createInvoiceAction } from "../../invoices/actions";
+import { createChallanAction } from "../../challans/actions";
+import { challanLabel } from "@/lib/admin-challans";
 import { invoiceLabel } from "@/lib/admin-invoices";
 
 const stamp = (d: Date) => d.toLocaleString("en-IN", { day: "numeric", month: "short", hour: "numeric", minute: "2-digit", timeZone: "Asia/Kolkata" });
@@ -43,6 +45,13 @@ export default async function OrderPage({ params }: { params: Promise<{ id: stri
                 <button className="btn btn-o btn-sm">Create invoice</button>
               </ActionForm>
             )}
+            {o.challans.map((c) => (
+              <Link key={c.id} className="btn btn-o btn-sm" href={`/admin/challans/${c.id}`}>Challan {challanLabel(c) ?? "draft"}</Link>
+            ))}
+            <ActionForm action={createChallanAction}>
+              <HiddenFields orderId={o.id} />
+              <button className="btn btn-o btn-sm">{o.challans.length ? "Another challan" : "Create challan"}</button>
+            </ActionForm>
             <a className="btn btn-o btn-sm" href={orderMessage(o, done ? "done" : "placed")} target="_blank" rel="noopener"><IconChat />{done ? "Send ready message" : "Send order summary"}</a>
             <ActionForm action={setOrderStatusAction}>
               <HiddenFields id={o.id} on={String(!done)} />
