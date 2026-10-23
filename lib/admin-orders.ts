@@ -140,7 +140,12 @@ export const findCustomer = async (db: Db, phone: string) => {
 export const getOrder = (db: Db, id: number) =>
   db.query.orders.findFirst({
     where: eq(orders.id, id),
-    with: { customer: true, items: { orderBy: (t, { asc }) => [asc(t.sort), asc(t.id)] }, invoices: { columns: { id: true, fy: true, seq: true } } },
+    with: {
+      customer: true,
+      items: { orderBy: (t, { asc }) => [asc(t.sort), asc(t.id)] },
+      invoices: { columns: { id: true, fy: true, seq: true } },
+      challans: { columns: { id: true, fy: true, seq: true }, orderBy: (t, { asc }) => [asc(t.id)] },
+    },
   });
 
 export type OrderTab = "pending" | "unpaid" | "done" | "all";

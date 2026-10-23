@@ -201,6 +201,53 @@ export const invoiceItems = sqliteTable(
   (t) => [index("invoice_items_invoice_sort").on(t.invoiceId, t.sort)],
 );
 
+export const challans = sqliteTable(
+  "challans",
+  {
+    id: integer("id").primaryKey({ autoIncrement: true }),
+    orderId: integer("order_id").notNull().references(() => orders.id),
+    status: text("status", { enum: ["draft", "issued", "delivered"] }).notNull().default("draft"),
+    fy: text("fy"),
+    seq: integer("seq"),
+    issuedOn: text("issued_on"),
+    deliverTo: text("deliver_to").notNull(),
+    phone: text("phone").notNull().default(""),
+    address: text("address").notNull().default(""),
+    mode: text("mode", { enum: ["pickup", "delivery", "courier"] }).notNull(),
+    vehicle: text("vehicle").notNull().default(""),
+    purpose: text("purpose", { enum: ["supply", "job-work", "sample", "part"] }).notNull().default("supply"),
+    returnable: integer("returnable", { mode: "boolean" }).notNull().default(false),
+    seller: text("seller", { mode: "json" }).$type<Seller>(),
+    createdAt: createdAt(),
+    deliveredAt: integer("delivered_at", { mode: "timestamp" }),
+    updatedAt: updatedAt(),
+  },
+  (t) => [uniqueIndex("challans_fy_seq").on(t.fy, t.seq), index("challans_order").on(t.orderId), index("challans_status").on(t.status)],
+);
+
+export const challanItems = sqliteTable(
+  "challan_items",
+  {
+    id: integer("id").primaryKey({ autoIncrement: true }),
+    challanId: integer("challan_id").notNull().references(() => challans.id, { onDelete: "cascade" }),
+    description: text("description").notNull(),
+    qty: integer("qty").notNull(),
+    unit: text("unit").notNull(),
+    packing: text("packing").notNull().default(""),
+    sort: integer("sort").notNull().default(0),
+  },
+  (t) => [index("challan_items_challan_sort").on(t.challanId, t.sort)],
+);
+
+export const challansRelations = relations(challans, ({ one, many }) => ({
+  order: one(orders, { fields: [challans.orderId], references: [orders.id] }),
+  items: many(challanItems),
+}));
+
+export const challanItemsRelations = relations(challanItems, ({ one }) => ({
+  challan: one(challans, { fields: [challanItems.challanId], references: [challans.id] }),
+}));
+
 export const invoicesRelations = relations(invoices, ({ one, many }) => ({
   order: one(orders, { fields: [invoices.orderId], references: [orders.id] }),
   items: many(invoiceItems),
@@ -216,6 +263,7 @@ export const ordersRelations = relations(orders, ({ one, many }) => ({
   customer: one(customers, { fields: [orders.customerId], references: [customers.id] }),
   items: many(orderItems),
   invoices: many(invoices),
+  challans: many(challans),
 }));
 
 export const orderItemsRelations = relations(orderItems, ({ one }) => ({

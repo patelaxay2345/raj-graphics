@@ -31,3 +31,7 @@
 .inv-sign div{height:40px}
 @media (max-width:640px){.inv-doc{padding:16px}.inv-top,.inv-parties,.inv-sum,.inv-foot{flex-direction:column}.inv-title,.inv-sign{text-align:left}.inv-sum table{min-width:0;width:100%}}
 @media print{.inv-doc{border:0;border-radius:0;padding:0;max-width:none}}
+.inv-note{margin:12px 0 0;font-size:11px;color:#52525b}
+.inv-recv{text-align:left}
+.inv-copies{display:flex;flex-direction:column;gap:16px;align-items:center}
+@media print{.inv-copies{gap:0;display:block}.inv-copies>.inv-doc+.inv-doc{break-before:page}}
