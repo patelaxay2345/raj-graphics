@@ -37,3 +37,5 @@ export async function verifyOwner(token: string | null | undefined, cfg: AccessC
     return null;
   }
 }
+
+export const isSameOrigin = (request: Request) => request.headers.get("origin") === new URL(request.url).origin;
