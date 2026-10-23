@@ -276,6 +276,14 @@ export const enquiries = sqliteTable(
   (t) => [index("enquiries_status_created").on(t.status, t.createdAt), index("enquiries_phone_created").on(t.phone, t.createdAt)],
 );
 
+export const media = sqliteTable("media", {
+  key: text("key").primaryKey(),
+  contentType: text("content_type").notNull(),
+  data: text("data").notNull(),
+  size: integer("size").notNull(),
+  createdAt: createdAt(),
+});
+
 export const testimonials = sqliteTable(
   "testimonials",
   {
