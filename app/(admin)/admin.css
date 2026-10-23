@@ -79,7 +79,7 @@ button.tile:focus-visible{outline:2px solid var(--pink);outline-offset:1px}
 .msg{margin:6px 0 0;font-size:12px;flex-basis:100%}
 .msg.err{color:#b91c1c}.msg.ok{color:#166534}
 .seg-grp{display:inline-flex;flex-wrap:wrap;gap:2px;padding:2px;background:#eceef6;border-radius:5px}
-.seg{min-height:24px;padding:0 10px;border-radius:4px;font-size:12.5px;font-weight:500;color:var(--muted);text-decoration:none;display:inline-flex;align-items:center}
+.seg{gap:6px;min-height:24px;padding:0 10px;border-radius:4px;font-size:12.5px;font-weight:500;color:var(--muted);text-decoration:none;display:inline-flex;align-items:center}
 .seg:hover{color:var(--ink)}
 .seg.on{background:#fff;color:var(--ink);box-shadow:0 1px 2px rgba(0,0,0,.08),0 0 0 1px var(--field)}
 .search{display:flex;align-items:center;gap:8px;min-height:30px;padding:0 9px;background:#fff;border:1px solid var(--field);border-radius:4px;flex:0 1 280px;min-width:200px;color:var(--muted)}
@@ -149,4 +149,35 @@ textarea.in{padding:6px 9px;min-height:72px;resize:vertical}
 .list form.inline .msg{margin:0}
 .pad.imgs{flex-direction:row}
 .preview .tag{display:inline-block;vertical-align:1px;color:#fff}
+.b{display:inline-flex;align-items:center;gap:6px;padding:1px 6px;border-radius:3px;font-size:11.5px;font-weight:500;white-space:nowrap;border:1px solid}
+.b i{width:6px;height:6px;border-radius:50%}
+.b-quoted{background:#fffbeb;color:#92400e;border-color:#fde68a}.b-quoted i{background:#f59e0b}
+.b-won{background:#f0fdf4;color:#166534;border-color:#bbf7d0}.b-won i{background:#22c55e}
+.b-due{background:#fef2f2;color:#b91c1c;border-color:#fecaca}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));overflow:hidden}
+.stats>div{padding:10px 16px;border-right:1px solid var(--line-2);display:flex;flex-direction:column}
+.stats span{font-size:12px;color:var(--muted)}
+.stats b{font-size:22px;font-weight:600;letter-spacing:-.03em}
+.sub{font-size:11.5px;color:var(--muted)}
+.tbl .r{text-align:right}
+.tbl td.job{max-width:320px}
+.tbl td.job .sub{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tbl td.late{color:#b91c1c;font-weight:500}
+.tbl .acts .b{margin-right:2px}
+.item+.item{border-top:1px solid var(--line-2)}
+.item-hd{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-start;gap:8px}
+button.chip{cursor:pointer;font:inherit;font-size:12.5px;font-weight:500}
+.note{margin:0;font-size:12.5px;color:var(--sub);display:flex;flex-wrap:wrap;align-items:center;gap:6px;padding:6px 8px;background:#f8f8fc;border:1px solid var(--line);border-radius:4px}
+.amt{min-height:30px;display:flex;align-items:center;font-weight:600}
+.num{font-variant-numeric:tabular-nums}
+.in.num{text-align:right}
+.row.two>.card{flex:1 1 300px;min-width:0}
+.pad>.fld{flex:none}
+.seg .mono{font-size:11.5px;opacity:.7}
+.sum>div{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:13px}
+.sum .tot{padding-top:8px;border-top:1px solid var(--line-2);font-weight:600}
+.sum .gst{display:inline-flex;align-items:center;gap:8px}
+.form-foot.col{flex-direction:column;align-items:stretch;border-top:1px solid var(--line-2)}
+.status-bar{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:8px;padding:8px 12px}
+.status-bar .acts{gap:8px}
 @media (max-width:760px){.side{max-width:none;flex-basis:100%}.main{padding:14px 16px}.top{padding:0 16px}}

@@ -75,3 +75,73 @@ export const designGroupsRelations = relations(designGroups, ({ one, many }) => 
 export const designsRelations = relations(designs, ({ one }) => ({
   group: one(designGroups, { fields: [designs.groupId], references: [designGroups.id] }),
 }));
+
+const createdAt = () => integer("created_at", { mode: "timestamp" }).notNull().default(sql`(unixepoch())`);
+
+export const customers = sqliteTable("customers", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  phone: text("phone").notNull().unique(),
+  name: text("name").notNull(),
+  business: text("business").notNull().default(""),
+  gstin: text("gstin").notNull().default(""),
+  city: text("city").notNull().default(""),
+  address: text("address").notNull().default(""),
+  createdAt: createdAt(),
+});
+
+export const orders = sqliteTable(
+  "orders",
+  {
+    id: integer("id").primaryKey({ autoIncrement: true }),
+    no: integer("no").notNull().unique(),
+    customerId: integer("customer_id").notNull().references(() => customers.id),
+    status: text("status", { enum: ["pending", "done"] }).notNull().default("pending"),
+    dueOn: text("due_on"),
+    deliveryMode: text("delivery_mode", { enum: ["pickup", "delivery", "courier"] }).notNull().default("pickup"),
+    designBy: text("design_by", { enum: ["we", "customer", "edit"] }).notNull().default("we"),
+    proofBy: text("proof_by", { enum: ["whatsapp", "email", "in-person"] }).notNull().default("whatsapp"),
+    notes: text("notes").notNull().default(""),
+    gstRate: integer("gst_rate").notNull().default(18),
+    subtotal: integer("subtotal").notNull(),
+    tax: integer("tax").notNull(),
+    total: integer("total").notNull(),
+    advance: integer("advance").notNull().default(0),
+    payMode: text("pay_mode", { enum: ["upi", "cash", "bank", "cheque"] }),
+    createdAt: createdAt(),
+    doneAt: integer("done_at", { mode: "timestamp" }),
+    updatedAt: updatedAt(),
+  },
+  (t) => [index("orders_status_due").on(t.status, t.dueOn), index("orders_customer").on(t.customerId)],
+);
+
+export const orderItems = sqliteTable(
+  "order_items",
+  {
+    id: integer("id").primaryKey({ autoIncrement: true }),
+    orderId: integer("order_id").notNull().references(() => orders.id, { onDelete: "cascade" }),
+    service: text("service", { enum: ["vc", "inv", "ad", "pam", "oth"] }).notNull(),
+    specs: text("specs", { mode: "json" }).$type<Record<string, string>>().notNull(),
+    qty: integer("qty").notNull(),
+    unit: text("unit").notNull(),
+    rate: integer("rate").notNull(),
+    hsn: text("hsn").notNull().default(""),
+    sort: integer("sort").notNull().default(0),
+  },
+  (t) => [index("order_items_order_sort").on(t.orderId, t.sort)],
+);
+
+export const counters = sqliteTable("counters", {
+  series: text("series").primaryKey(),
+  next: integer("next").notNull(),
+});
+
+export const customersRelations = relations(customers, ({ many }) => ({ orders: many(orders) }));
+
+export const ordersRelations = relations(orders, ({ one, many }) => ({
+  customer: one(customers, { fields: [orders.customerId], references: [customers.id] }),
+  items: many(orderItems),
+}));
+
+export const orderItemsRelations = relations(orderItems, ({ one }) => ({
+  order: one(orders, { fields: [orderItems.orderId], references: [orders.id] }),
+}));
