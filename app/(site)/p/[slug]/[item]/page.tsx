@@ -5,7 +5,7 @@ import { Contact } from "@/components/contact";
 import { EnquireButton } from "@/components/enquiry";
 import { products, type CategoryDetail, type Product } from "@/lib/catalog";
 import { img, waLink } from "@/lib/site";
-import { loadCategory } from "@/lib/site-data";
+import { loadCategory, loadStore } from "@/lib/site-data";
 
 type Params = { params: Promise<{ slug: string; item: string }> };
 
@@ -25,12 +25,12 @@ const load = async (params: Params["params"]): Promise<Loaded | undefined> => {
 };
 
 export async function generateMetadata({ params }: Params): Promise<Metadata> {
-  const d = await load(params);
-  return { title: d && "p" in d ? `${d.p.t} — ${d.c.name} — Raj Graphics` : undefined };
+  const [d, store] = await Promise.all([load(params), loadStore()]);
+  return { title: d && "p" in d ? `${d.p.t} — ${d.c.name} — ${store.name}` : undefined };
 }
 
 export default async function ProductPage({ params }: Params) {
-  const d = await load(params);
+  const [d, store] = await Promise.all([load(params), loadStore()]);
   if (!d) notFound();
   if ("redirect" in d) permanentRedirect(d.redirect);
   const { c, list, n, p } = d;
@@ -63,7 +63,7 @@ export default async function ProductPage({ params }: Params) {
           )}
           <div className="ctas">
             <EnquireButton className="btn btn-p" product={label} image={p.img}>Enquire Now →</EnquireButton>
-            <a className="btn btn-o" href={waLink(`Hi Raj Graphics, I'm interested in ${label}.`)} target="_blank" rel="noopener">💬 WhatsApp</a>
+            <a className="btn btn-o" href={waLink(store.whatsapp, `Hi ${store.name}, I'm interested in ${label}.`)} target="_blank" rel="noopener">💬 WhatsApp</a>
           </div>
           <div className="pn">
             {n > 0 ? <Link className="btn btn-o" href={`/p/${c.slug}/${list[n - 1].key}`}>← {list[n - 1].t}</Link> : <span />}

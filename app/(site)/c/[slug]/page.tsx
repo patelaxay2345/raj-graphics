@@ -7,17 +7,17 @@ import { Contact } from "@/components/contact";
 import { EnquireButton } from "@/components/enquiry";
 import { ShowAll } from "@/components/show-all";
 import { TPL_PAGE, img, isFitImage, waLink } from "@/lib/site";
-import { loadCategory, loadCategoryCards } from "@/lib/site-data";
+import { loadCategory, loadCategoryCards, loadStore } from "@/lib/site-data";
 
 type Params = { params: Promise<{ slug: string }> };
 
 export async function generateMetadata({ params }: Params): Promise<Metadata> {
-  const c = await loadCategory((await params).slug);
-  return { title: c && `${c.name} — Raj Graphics` };
+  const [c, store] = await Promise.all([loadCategory((await params).slug), loadStore()]);
+  return { title: c && `${c.name} — ${store.name}` };
 }
 
 export default async function CategoryPage({ params }: Params) {
-  const c = await loadCategory((await params).slug);
+  const [c, store] = await Promise.all([loadCategory((await params).slug), loadStore()]);
   if (!c) notFound();
 
   const designs = c.groups.reduce((a, g) => a + g.designs.length, 0);
@@ -36,7 +36,7 @@ export default async function CategoryPage({ params }: Params) {
           <p>{c.description || `Premium ${c.name.toLowerCase()} with a free design check and fast turnaround. Share your requirement and get a quote in minutes.`}</p>
           <div className="ctas">
             <EnquireButton className="btn btn-p" product={c.name}>Get a Quote →</EnquireButton>
-            <a className="btn btn-o" href={waLink()} target="_blank" rel="noopener">💬 Chat on WhatsApp</a>
+            <a className="btn btn-o" href={waLink(store.whatsapp)} target="_blank" rel="noopener">💬 Chat on WhatsApp</a>
           </div>
           <div className="feats">
             <div><i className="i-violet">⏱</i><span><b>{c.turnaround}</b>Turnaround</span></div>
