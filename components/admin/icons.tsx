@@ -11,3 +11,4 @@ export const IconSearch = () => <svg {...base}><circle cx="11" cy="11" r="7" /><
 export const IconCheck = () => <svg {...base}><path d="M20 6 9 17l-5-5" /></svg>;
 export const IconUndo = () => <svg {...base}><path d="M3 12a9 9 0 1 0 3-6.7L3 8M3 3v5h5" /></svg>;
 export const IconChat = () => <svg {...base}><path d="M21 12a8 8 0 0 1-11.8 7L3 21l2-5.6A8 8 0 1 1 21 12z" /></svg>;
+export const IconLogout = () => <svg {...base}><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9" /></svg>;

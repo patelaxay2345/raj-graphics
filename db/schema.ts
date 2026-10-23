@@ -276,6 +276,16 @@ export const enquiries = sqliteTable(
   (t) => [index("enquiries_status_created").on(t.status, t.createdAt), index("enquiries_phone_created").on(t.phone, t.createdAt)],
 );
 
+export const loginAttempts = sqliteTable(
+  "login_attempts",
+  {
+    id: integer("id").primaryKey({ autoIncrement: true }),
+    ip: text("ip").notNull(),
+    at: integer("at", { mode: "timestamp_ms" }).notNull(),
+  },
+  (t) => [index("login_attempts_ip_at").on(t.ip, t.at), index("login_attempts_at").on(t.at)],
+);
+
 export const media = sqliteTable("media", {
   key: text("key").primaryKey(),
   contentType: text("content_type").notNull(),
