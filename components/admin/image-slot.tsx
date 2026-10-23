@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import { useRef, useState } from "react";
 import { sendWebp, toWebp } from "@/lib/client-upload";
 
-export function ImageSlot({ categoryId, slot, label, hint, src, maxSide }: { categoryId: number; slot: "mockup" | "cover"; label: string; hint: string; src: string | null; maxSide: number }) {
+export function ImageSlot({ url, label, hint, src, maxSide }: { url: string; label: string; hint: string; src: string | null; maxSide: number }) {
   const router = useRouter();
   const input = useRef<HTMLInputElement>(null);
   const [state, setState] = useState<{ busy: boolean; error?: string; pct?: number }>({ busy: false });
@@ -14,7 +14,7 @@ export function ImageSlot({ categoryId, slot, label, hint, src, maxSide }: { cat
     setState({ busy: true, pct: 0 });
     try {
       const blob = await toWebp(file, maxSide);
-      await sendWebp(`/api/admin/categories/${categoryId}/image?slot=${slot}`, blob, (pct) => setState({ busy: true, pct }));
+      await sendWebp(url, blob, (pct) => setState({ busy: true, pct }));
       setState({ busy: false });
       router.refresh();
     } catch (e) {

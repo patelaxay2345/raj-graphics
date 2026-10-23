@@ -1,7 +1,7 @@
 import { and, asc, count, countDistinct, eq, max, ne } from "drizzle-orm";
 import { z } from "zod";
 import type { Db } from "@/db";
-import { categories, designGroups, designs, variants } from "@/db/schema";
+import { categories, designGroups, designs, testimonials, variants } from "@/db/schema";
 
 const text = (maxLen: number) => z.string().trim().max(maxLen);
 
@@ -112,9 +112,9 @@ export async function deleteCategory(db: Db, id: number) {
   await db.delete(categories).where(eq(categories.id, id));
 }
 
-type Sortable = typeof categories | typeof variants | typeof designGroups;
+type Sortable = typeof categories | typeof variants | typeof designGroups | typeof testimonials;
 
-async function move(db: Db, table: Sortable, ids: number[], id: number, dir: -1 | 1) {
+export async function move(db: Db, table: Sortable, ids: number[], id: number, dir: -1 | 1) {
   const at = ids.indexOf(id);
   const to = at + dir;
   if (at < 0 || to < 0 || to >= ids.length) return;
@@ -166,4 +166,14 @@ export async function deleteGroup(db: Db, categoryId: number, id: number) {
 export async function moveGroup(db: Db, categoryId: number, id: number, dir: -1 | 1) {
   const rows = await db.select({ id: designGroups.id }).from(designGroups).where(eq(designGroups.categoryId, categoryId)).orderBy(asc(designGroups.sort), asc(designGroups.id));
   await move(db, designGroups, rows.map((r) => r.id), id, dir);
+}
+
+export async function moveHomeCategory(db: Db, id: number, dir: -1 | 1) {
+  const ids = (await db.select({ id: categories.id }).from(categories).where(eq(categories.showOnHome, true)).orderBy(asc(categories.homeSort), asc(categories.id))).map((r) => r.id);
+  const at = ids.indexOf(id);
+  const to = at + dir;
+  if (at < 0 || to < 0 || to >= ids.length) return;
+  [ids[at], ids[to]] = [ids[to], ids[at]];
+  const [first, ...rest] = ids.map((x, i) => db.update(categories).set({ homeSort: i }).where(eq(categories.id, x)));
+  await db.batch([first, ...rest]);
 }

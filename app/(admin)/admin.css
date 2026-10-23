@@ -208,4 +208,14 @@ button.seg.on{background:#fff}
 .feed li>a{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:inherit;text-decoration:none}
 .feed li>a:hover{color:var(--navy)}
 .feed .sub{display:inline-flex;align-items:center;gap:8px;white-space:nowrap}
+.pairs{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
+.pairs li{display:flex;gap:6px;align-items:center}
+.pairs .n{width:18px;flex:none;font-size:11.5px;color:var(--muted);text-align:right}
+.pairs .in{flex:1 1 0;min-width:0}
+.pairs .thumb{flex:none}
+.grow{flex:1;min-width:0}
+.review-form{display:flex;flex-direction:column;gap:6px;flex:1;min-width:0}
+.review-form .row{align-items:center}
+.review-form .fld{flex:1 1 120px}
+.reviews-list>li{align-items:flex-start}
 @media (max-width:760px){.side{max-width:none;flex-basis:100%}.main{padding:14px 16px}.top{padding:0 16px}}
