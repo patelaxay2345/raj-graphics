@@ -2,7 +2,7 @@ import Link from "next/link";
 import { Suspense } from "react";
 import { EnquireButton } from "@/components/enquiry";
 import { SearchBox, SearchBoxFallback } from "@/components/search-box";
-import { waLink } from "@/lib/catalog";
+import { waLink } from "@/lib/site";
 
 const TRACK = waLink("Hi Raj Graphics, I want to check the status of my order.");
 
