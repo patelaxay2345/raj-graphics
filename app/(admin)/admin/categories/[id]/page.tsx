@@ -43,8 +43,8 @@ export default async function CategoryEditPage({ params }: { params: Promise<{ i
             <section className="card">
               <div className="card-hd"><h2>Images</h2></div>
               <div className="pad imgs">
-                <ImageSlot categoryId={c.id} slot="mockup" label="Mockup (category page header)" hint="Wide image · up to 1200 px" src={c.mockupKey && img(c.mockupKey)} maxSide={1200} />
-                <ImageSlot categoryId={c.id} slot="cover" label="Card image (used when there is no mockup)" hint="Up to 600 px" src={img(c.coverKey)} maxSide={600} />
+                <ImageSlot url={`/api/admin/categories/${c.id}/image?slot=mockup`} label="Mockup (category page header)" hint="Wide image · up to 1200 px" src={c.mockupKey && img(c.mockupKey)} maxSide={1200} />
+                <ImageSlot url={`/api/admin/categories/${c.id}/image?slot=cover`} label="Card image (used when there is no mockup)" hint="Up to 600 px" src={img(c.coverKey)} maxSide={600} />
               </div>
             </section>
 

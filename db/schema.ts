@@ -276,6 +276,20 @@ export const enquiries = sqliteTable(
   (t) => [index("enquiries_status_created").on(t.status, t.createdAt), index("enquiries_phone_created").on(t.phone, t.createdAt)],
 );
 
+export const testimonials = sqliteTable(
+  "testimonials",
+  {
+    id: integer("id").primaryKey({ autoIncrement: true }),
+    quote: text("quote").notNull(),
+    name: text("name").notNull(),
+    role: text("role").notNull().default(""),
+    sort: integer("sort").notNull().default(0),
+    active: integer("active", { mode: "boolean" }).notNull().default(true),
+    createdAt: createdAt(),
+  },
+  (t) => [index("testimonials_sort").on(t.sort)],
+);
+
 export const customersRelations = relations(customers, ({ many }) => ({ orders: many(orders) }));
 
 export const ordersRelations = relations(orders, ({ one, many }) => ({

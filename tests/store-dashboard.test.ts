@@ -60,6 +60,6 @@ describe("dashboard", () => {
     expect(d.stats).toMatchObject({ pending: 2, dueToday: 1, balance: 180000 });
     expect(d.recentOrders.map((o) => o.customer.name)).toEqual(["Shah", "Mehta"]);
     expect(d.recentEnquiries.map((e) => e.name)).toEqual(["Ravi", "Asha"]);
-    expect(d.setup.filter((s) => !s.done).map((s) => s.label)).toEqual(["Set your real WhatsApp number", "Add the shop phone and address", "Turn on spam protection (Turnstile keys) so site forms work"]);
+    expect(d.setup.filter((s) => !s.done).map((s) => s.label)).toEqual(["Set your real WhatsApp number", "Add the shop phone and address", "Add real customer reviews for the home page", "Turn on spam protection (Turnstile keys) so site forms work"]);
   });
 });
