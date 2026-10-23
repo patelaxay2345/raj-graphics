@@ -210,6 +210,10 @@ label.f input,label.f select,label.f textarea{border:1px solid var(--line);borde
 label.f input:focus,label.f select:focus,label.f textarea:focus{border-color:var(--navy);background:#fff}
 .ok{display:none;grid-column:1/-1;background:#e7f6ee;color:#0b7a43;padding:12px 14px;border-radius:12px;font-weight:600;font-size:14px}
 .ok.show{display:block}
+.err{grid-column:1/-1;background:#fdecec;color:#b42318;padding:12px 14px;border-radius:12px;font-weight:600;font-size:14px}
+.err .link{color:inherit;text-decoration:underline;font:inherit;font-weight:700;padding:0;background:none;border:0;cursor:pointer}
+.hp{position:absolute;left:-10000px;width:1px;height:1px;overflow:hidden}
+.ts:empty{display:none}
 
 /* modal */
 dialog{margin:auto;border:0;border-radius:24px;padding:0;max-width:560px;width:calc(100% - 32px);box-shadow:0 30px 80px rgba(0,0,0,.35)}

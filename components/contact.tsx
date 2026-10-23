@@ -12,7 +12,7 @@ export function Contact() {
           <li><i>📍</i><span><b>Store</b>Shop address, Area, City – PIN</span></li>
         </ul>
       </div>
-      <EnquiryForm />
+      <EnquiryForm source="contact" />
     </section>
   );
 }
