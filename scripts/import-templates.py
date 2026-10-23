@@ -1,12 +1,12 @@
 """Import design templates from design/content (data-full.json or data.json + images) into the site.
 
-Writes web-ready sRGB thumbnails to public/img/t/<category>/ and data/templates.json.
+Writes web-ready sRGB thumbnails to db/seed-img/t/<category>/ and data/templates.json.
 """
 import json, os, subprocess
 from urllib.parse import unquote
 
 REPO = os.path.join(os.path.dirname(__file__), '..')
-ROOT = os.path.join(REPO, 'public')
+ROOT = os.path.join(REPO, 'db', 'seed-img')
 SRC = os.path.join(REPO, 'design', 'content')
 
 # source category slug -> site category slug (one site category per Printers Club category)
@@ -41,7 +41,7 @@ for c in data['categories']:
     site = MAP[c['slug']]
     cover = next((f for f in os.listdir(os.path.join(SRC, 'images', c['slug'])) if f.startswith('_cover')), None)
     if cover:
-        thumb(os.path.join(SRC, 'images', c['slug'], cover), f'img/cover/{site}.jpg')
+        thumb(os.path.join(SRC, 'images', c['slug'], cover), f'cover/{site}.jpg')
     lists = [(f"{c['name']} designs", c['designs'])] if 'designs' in c else [(s['name'].title(), s['designs']) for s in c['subcategories']]
     n = 0
     for title, designs in lists:
@@ -51,9 +51,9 @@ for c in data['categories']:
             if not rel or not os.path.exists(os.path.join(SRC, rel)):
                 continue
             n += 1
-            dest = f"img/t/{site}/{n}.jpg"
+            dest = f"t/{site}/{n}.jpg"
             thumb(os.path.join(SRC, rel), dest)
-            items.append([d['name'], '/' + dest])
+            items.append([d['name'], '/img/' + dest])
         if items:
             tpl.setdefault(site, []).append({'g': title, 'items': items})
     counts[site] = (n, c['count'])
