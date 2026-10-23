@@ -1,78 +1,90 @@
-import { SignJWT, UnsecuredJWT, createLocalJWKSet, exportJWK, generateKeyPair, type JWTVerifyGetKey } from "jose";
-import { beforeAll, describe, expect, it } from "vitest";
-import { accessConfig, verifyOwner, type AccessConfig } from "@/lib/auth";
+import { migrate } from "drizzle-orm/d1/migrator";
+import { Miniflare } from "miniflare";
+import { afterAll, beforeAll, describe, expect, it } from "vitest";
+import { connect, type Db } from "@/db";
+import { authConfig, createSession, hashPassword, isSameOrigin, readCookie, safeNext, verifyPassword, verifySession, type AuthConfig } from "@/lib/auth";
+import { LOGIN_LIMITS, attemptLogin } from "@/lib/login";
 
-const cfg: AccessConfig = { teamDomain: "rajgraphics.cloudflareaccess.com", aud: "aud-tag", ownerEmail: "owner@example.com" };
-
-let keys: JWTVerifyGetKey;
-let privateKey: CryptoKey;
-let otherKey: CryptoKey;
+let cfg: AuthConfig;
+let mf: Miniflare;
+let db: Db;
+const SECRET = "s".repeat(40);
 
 beforeAll(async () => {
-  const pair = await generateKeyPair("RS256");
-  privateKey = pair.privateKey;
-  otherKey = (await generateKeyPair("RS256")).privateKey;
-  keys = createLocalJWKSet({ keys: [{ ...(await exportJWK(pair.publicKey)), kid: "k1", alg: "RS256" }] });
+  cfg = { ownerEmail: "owner@example.com", passwordHash: await hashPassword("correct horse battery", 1000), sessionSecret: SECRET };
+  mf = new Miniflare({ modules: true, script: "export default {}", d1Databases: ["DB"] });
+  db = connect(await mf.getD1Database("DB"));
+  await migrate(db, { migrationsFolder: "drizzle" });
 });
 
-const sign = (claims: Record<string, unknown> = {}, opts: { key?: CryptoKey; iss?: string; aud?: string; exp?: string | number } = {}) =>
-  new SignJWT({ email: "owner@example.com", ...claims })
-    .setProtectedHeader({ alg: "RS256", kid: "k1" })
-    .setIssuer(opts.iss ?? `https://${cfg.teamDomain}`)
-    .setAudience(opts.aud ?? cfg.aud)
-    .setIssuedAt()
-    .setExpirationTime(opts.exp ?? "1h")
-    .sign(opts.key ?? privateKey);
+afterAll(() => mf.dispose());
 
-describe("verifyOwner", () => {
-  it("accepts a valid Access token for the owner", async () => {
-    expect(await verifyOwner(await sign(), cfg, keys)).toBe("owner@example.com");
-  });
-
-  it("compares email case-insensitively", async () => {
-    expect(await verifyOwner(await sign({ email: "Owner@Example.com" }), cfg, keys)).toBe("owner@example.com");
-  });
-
-  it("rejects missing token or config", async () => {
-    expect(await verifyOwner(null, cfg, keys)).toBeNull();
-    expect(await verifyOwner("", cfg, keys)).toBeNull();
-    expect(await verifyOwner(await sign(), undefined, keys)).toBeNull();
-  });
-
-  it("rejects another user, wrong audience, wrong issuer and expired tokens", async () => {
-    expect(await verifyOwner(await sign({ email: "someone@example.com" }), cfg, keys)).toBeNull();
-    expect(await verifyOwner(await sign({ email: undefined }), cfg, keys)).toBeNull();
-    expect(await verifyOwner(await sign({}, { aud: "other-app" }), cfg, keys)).toBeNull();
-    expect(await verifyOwner(await sign({}, { iss: "https://evil.cloudflareaccess.com" }), cfg, keys)).toBeNull();
-    expect(await verifyOwner(await sign({}, { exp: Math.floor(Date.now() / 1000) - 60 }), cfg, keys)).toBeNull();
-  });
-
-  it("rejects forged and tampered tokens", async () => {
-    expect(await verifyOwner(await sign({}, { key: otherKey }), cfg, keys)).toBeNull();
-    const [h, , s] = (await sign()).split(".");
-    const body = Buffer.from(JSON.stringify({ email: "owner@example.com", aud: cfg.aud, iss: `https://${cfg.teamDomain}`, exp: 9e9 })).toString("base64url");
-    expect(await verifyOwner(`${h}.${body}.${s}`, cfg, keys)).toBeNull();
-    const none = new UnsecuredJWT({ email: "owner@example.com" }).setIssuer(`https://${cfg.teamDomain}`).setAudience(cfg.aud).setExpirationTime("1h").encode();
-    expect(await verifyOwner(none, cfg, keys)).toBeNull();
-    const hs = await new SignJWT({ email: "owner@example.com" }).setProtectedHeader({ alg: "HS256" }).setIssuer(`https://${cfg.teamDomain}`).setAudience(cfg.aud).setExpirationTime("1h").sign(new TextEncoder().encode("x".repeat(32)));
-    expect(await verifyOwner(hs, cfg, keys)).toBeNull();
-    expect(await verifyOwner("not.a.jwt", cfg, keys)).toBeNull();
+describe("authConfig", () => {
+  it("needs owner email, a well-formed hash and a long session secret, else fails closed", () => {
+    const env = { OWNER_EMAIL: " Owner@Example.com ", ADMIN_PASSWORD_HASH: cfg.passwordHash, SESSION_SECRET: SECRET };
+    expect(authConfig(env)).toEqual({ ownerEmail: "owner@example.com", passwordHash: cfg.passwordHash, sessionSecret: SECRET });
+    expect(authConfig({ ...env, OWNER_EMAIL: undefined })).toBeUndefined();
+    expect(authConfig({ ...env, ADMIN_PASSWORD_HASH: "plaintext" })).toBeUndefined();
+    expect(authConfig({ ...env, SESSION_SECRET: "short" })).toBeUndefined();
   });
 });
 
-describe("accessConfig", () => {
-  const env = { ACCESS_TEAM_DOMAIN: " RajGraphics.cloudflareaccess.com ", ACCESS_AUD: "aud-tag", OWNER_EMAIL: "Owner@Example.com" };
+describe("passwords", () => {
+  it("hashes with a random salt and verifies only the right password", async () => {
+    const a = await hashPassword("pw-123456", 1000);
+    const b = await hashPassword("pw-123456", 1000);
+    expect(a).toMatch(/^pbkdf2-sha256\$1000\$[\w-]{22}\$[\w-]{43}$/);
+    expect(a).not.toBe(b);
+    expect(await verifyPassword("pw-123456", a)).toBe(true);
+    expect(await verifyPassword("pw-123457", a)).toBe(false);
+    expect(await verifyPassword("pw-123456", "garbage")).toBe(false);
+    expect(await verifyPassword("pw-123456", a.replace("$1000$", "$999999$"))).toBe(false);
+  });
+});
 
-  it("normalises a complete config", () => {
-    expect(accessConfig(env)).toEqual(cfg);
+describe("sessions", () => {
+  it("accepts a fresh session and rejects tampered, expired, foreign or stale-password sessions", async () => {
+    const now = Date.now();
+    const t = await createSession(cfg, now);
+    expect(await verifySession(t, cfg, now)).toBe("owner@example.com");
+    expect(await verifySession(t, cfg, now + 8 * 86_400_000)).toBeNull();
+    const [body, sig] = t.split(".");
+    const forged = Buffer.from(JSON.stringify({ e: "owner@example.com", x: now + 1e12 })).toString("base64url");
+    expect(await verifySession(`${forged}.${sig}`, cfg, now)).toBeNull();
+    expect(await verifySession(`${body}.${sig}x`, cfg, now)).toBeNull();
+    expect(await verifySession(`${body}.${sig}.x`, cfg, now)).toBeNull();
+    expect(await verifySession(undefined, cfg, now)).toBeNull();
+    expect(await verifySession(t, { ...cfg, sessionSecret: "t".repeat(40) }, now)).toBeNull();
+    expect(await verifySession(t, { ...cfg, passwordHash: await hashPassword("new password", 1000) }, now)).toBeNull();
+    expect(await verifySession(t, { ...cfg, ownerEmail: "someone@else.com" }, now)).toBeNull();
   });
 
-  it("fails closed on missing or malformed values", () => {
-    expect(accessConfig({})).toBeUndefined();
-    expect(accessConfig({ ...env, ACCESS_AUD: " " })).toBeUndefined();
-    expect(accessConfig({ ...env, OWNER_EMAIL: "owner" })).toBeUndefined();
-    expect(accessConfig({ ...env, ACCESS_TEAM_DOMAIN: "evil.com" })).toBeUndefined();
-    expect(accessConfig({ ...env, ACCESS_TEAM_DOMAIN: "x.cloudflareaccess.com.evil.com" })).toBeUndefined();
-    expect(accessConfig({ ...env, ACCESS_TEAM_DOMAIN: "https://x.cloudflareaccess.com" })).toBeUndefined();
+  it("reads cookies and only redirects back into the admin", () => {
+    expect(readCookie("a=1; __Host-rg_admin=tok.sig; b=2", "__Host-rg_admin")).toBe("tok.sig");
+    expect(readCookie("x__Host-rg_admin=bad", "__Host-rg_admin")).toBeUndefined();
+    expect(readCookie(null, "x")).toBeUndefined();
+    for (const [n, want] of [["/admin/orders?t=all", "/admin/orders?t=all"], ["/admin", "/admin"], ["//evil.com", "/admin"], ["https://evil.com/admin", "/admin"], ["/administrator", "/admin"], ["/c/x", "/admin"], [undefined, "/admin"]] as const) expect(safeNext(n)).toBe(want);
+    expect(isSameOrigin(new Request("https://a.dev/x", { headers: { origin: "https://a.dev" } }))).toBe(true);
+    expect(isSameOrigin(new Request("https://a.dev/x", { headers: { origin: "https://evil.dev" } }))).toBe(false);
+  });
+});
+
+describe("attemptLogin", () => {
+  it("logs in the owner, rejects wrong email or password and locks an IP after repeated failures", async () => {
+    const t = Date.now();
+    expect(await attemptLogin(db, cfg, { email: " OWNER@example.com ", password: "correct horse battery", ip: "1.1.1.1" }, t)).toEqual({ ok: true });
+    expect(await attemptLogin(db, cfg, { email: "owner@example.com", password: "nope", ip: "2.2.2.2" }, t)).toEqual({ ok: false, error: "Wrong email or password." });
+    expect(await attemptLogin(db, cfg, { email: "x@example.com", password: "correct horse battery", ip: "2.2.2.2" }, t)).toMatchObject({ ok: false });
+    for (let i = 2; i < LOGIN_LIMITS.perIp; i++) await attemptLogin(db, cfg, { email: "owner@example.com", password: "nope", ip: "2.2.2.2" }, t);
+    const locked = await attemptLogin(db, cfg, { email: "owner@example.com", password: "correct horse battery", ip: "2.2.2.2" }, t);
+    expect(locked).toEqual({ ok: false, error: "Too many attempts. Wait 15 minutes and try again." });
+    expect(await attemptLogin(db, cfg, { email: "owner@example.com", password: "correct horse battery", ip: "3.3.3.3" }, t)).toEqual({ ok: true });
+    expect(await attemptLogin(db, cfg, { email: "owner@example.com", password: "correct horse battery", ip: "2.2.2.2" }, t + LOGIN_LIMITS.windowMs + 1)).toEqual({ ok: true });
+  });
+
+  it("locks everyone once total failures across IPs hit the global limit", async () => {
+    const t = Date.now() + 10 * LOGIN_LIMITS.windowMs;
+    for (let i = 0; i < LOGIN_LIMITS.total; i++) await attemptLogin(db, cfg, { email: "owner@example.com", password: "nope", ip: `10.0.0.${i}` }, t);
+    expect(await attemptLogin(db, cfg, { email: "owner@example.com", password: "correct horse battery", ip: "9.9.9.9" }, t)).toMatchObject({ ok: false, error: expect.stringContaining("Too many") });
   });
 });
