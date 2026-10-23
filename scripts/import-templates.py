@@ -1,12 +1,12 @@
 """Import design templates from design/content (data-full.json or data.json + images) into the site.
 
-Writes web-ready sRGB thumbnails to db/seed-img/t/<category>/ and data/templates.json.
+Writes web-ready sRGB thumbnails to public/img/t/<category>/ and data/templates.json.
 """
 import json, os, subprocess
 from urllib.parse import unquote
 
 REPO = os.path.join(os.path.dirname(__file__), '..')
-ROOT = os.path.join(REPO, 'db', 'seed-img')
+ROOT = os.path.join(REPO, 'public', 'img')
 SRC = os.path.join(REPO, 'design', 'content')
 
 # source category slug -> site category slug (one site category per Printers Club category)

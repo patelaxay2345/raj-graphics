@@ -3,6 +3,7 @@ import { z } from "zod";
 import type { Db } from "@/db";
 import { categories, designGroups, designs, variants } from "@/db/schema";
 import { AdminError } from "@/lib/admin-categories";
+import type { MediaStore } from "@/lib/media";
 
 // D1 allows at most 100 bound parameters per statement; the category check binds each key twice.
 const CHUNK = 45;
@@ -43,7 +44,7 @@ export async function moveDesigns(db: Db, groupId: number, input: number[], toGr
   await db.batch([first, ...rest]);
 }
 
-export async function deleteDesigns(db: Db, bucket: R2Bucket, groupId: number, input: number[]) {
+export async function deleteDesigns(db: Db, store: MediaStore, groupId: number, input: number[]) {
   const ids = designIdsSchema.parse(input);
   const { picked } = await groupDesigns(db, groupId, ids);
   const [first, ...rest] = chunks(ids).map((c) => db.delete(designs).where(and(eq(designs.groupId, groupId), inArray(designs.id, c))));
@@ -59,7 +60,7 @@ export async function deleteDesigns(db: Db, bucket: R2Bucket, groupId: number, i
     for (const k of [...a.map((r) => r.k), ...b.map((r) => r.k), ...d.flatMap((r) => [r.m, r.c])]) if (k) used.add(k);
   }
   const orphaned = keys.filter((k) => !used.has(k));
-  if (orphaned.length) await bucket.delete(orphaned);
+  if (orphaned.length) await store.delete(orphaned);
 }
 
 export async function reorderDesigns(db: Db, groupId: number, input: number[]) {

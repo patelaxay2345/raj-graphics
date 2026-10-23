@@ -12,14 +12,8 @@
     {
       "binding": "DB",
       "database_name": "raj-graphics",
-      "database_id": "REPLACE_WITH_D1_DATABASE_ID",
+      "database_id": "efe22d78-c46c-417d-be89-441e19cb749b",
       "migrations_dir": "drizzle"
-    }
-  ],
-  "r2_buckets": [
-    {
-      "binding": "MEDIA",
-      "bucket_name": "raj-graphics-media"
     }
   ],
   "services": [

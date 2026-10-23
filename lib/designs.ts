@@ -1,5 +1,6 @@
 import { and, eq, sql } from "drizzle-orm";
 import type { Db } from "@/db";
+import type { MediaStore } from "@/lib/media";
 import { categories, designGroups, designs } from "@/db/schema";
 
 export const MAX_THUMB_BYTES = 1_000_000;
@@ -44,7 +45,7 @@ export async function readCapped(body: ReadableStream<Uint8Array> | null, max: n
 
 export class GroupNotFoundError extends Error {}
 
-export async function addDesign(db: Db, bucket: R2Bucket, groupId: number, bytes: Uint8Array) {
+export async function addDesign(db: Db, store: MediaStore, groupId: number, bytes: Uint8Array) {
   const group = await db.query.designGroups.findFirst({
     where: eq(designGroups.id, groupId),
     with: { category: { columns: { slug: true, designPrefix: true } } },
@@ -67,7 +68,7 @@ export async function addDesign(db: Db, bucket: R2Bucket, groupId: number, bytes
   const code = `${n.prefix}${n.next - 1}`;
   const imageKey = `t/${group.category.slug}/${crypto.randomUUID()}.webp`;
 
-  await bucket.put(imageKey, bytes, { httpMetadata: { contentType: "image/webp" } });
+  await store.put(imageKey, bytes);
   try {
     const [row] = await db
       .insert(designs)
@@ -75,7 +76,7 @@ export async function addDesign(db: Db, bucket: R2Bucket, groupId: number, bytes
       .returning({ id: designs.id, code: designs.code, imageKey: designs.imageKey });
     return row;
   } catch (e) {
-    await bucket.delete(imageKey);
+    await store.delete(imageKey);
     throw e;
   }
 }

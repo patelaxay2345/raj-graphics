@@ -6,6 +6,7 @@ import { ZodError } from "zod";
 import { connect, type Db } from "@/db";
 import { categories, designGroups, designs } from "@/db/schema";
 import { seedCatalog } from "@/db/seed";
+import { mediaStore, type MediaStore } from "@/lib/media";
 import { AdminError } from "@/lib/admin-categories";
 import { deleteDesigns, moveDesigns, reorderDesigns, setDesignsActive } from "@/lib/admin-designs";
 import { getCategory } from "@/lib/catalog";
@@ -15,16 +16,16 @@ const webp = new Uint8Array([...new TextEncoder().encode("RIFF"), 0, 0, 0, 0, ..
 
 let mf: Miniflare;
 let db: Db;
-let bucket: R2Bucket;
+let bucket: MediaStore;
 const groupsOf = async (slug: string) =>
   db.select({ id: designGroups.id }).from(designGroups).innerJoin(categories, eq(categories.id, designGroups.categoryId)).where(eq(categories.slug, slug)).orderBy(asc(designGroups.sort));
 const idsIn = async (groupId: number) => (await db.select({ id: designs.id }).from(designs).where(eq(designs.groupId, groupId)).orderBy(asc(designs.sort), asc(designs.id))).map((d) => d.id);
 
 beforeAll(async () => {
-  mf = new Miniflare({ modules: true, script: "export default {}", d1Databases: ["DB"], r2Buckets: ["MEDIA"] });
+  mf = new Miniflare({ modules: true, script: "export default {}", d1Databases: ["DB"] });
   db = connect(await mf.getD1Database("DB"));
-  bucket = (await mf.getR2Bucket("MEDIA")) as unknown as R2Bucket;
   await migrate(db, { migrationsFolder: "drizzle" });
+  bucket = mediaStore(db);
   await seedCatalog(db);
 });
 
@@ -92,7 +93,7 @@ describe("reorderDesigns", () => {
 });
 
 describe("deleteDesigns", () => {
-  it("removes rows and R2 objects no other row still uses", async () => {
+  it("removes rows and stored images no other row still uses", async () => {
     const [g] = await groupsOf("envelopes");
     const uploaded = await addDesign(db, bucket, g.id, webp);
     const [seeded, sharer] = await idsIn(g.id);
@@ -108,9 +109,9 @@ describe("deleteDesigns", () => {
     expect(left).not.toContain(uploaded.id);
     expect(left).not.toContain(seeded);
     expect(left).toContain(twin);
-    expect(await bucket.head(uploaded.imageKey)).toBeNull();
-    expect(await bucket.head(seedKey)).toBeNull();
-    expect(await bucket.head(shared)).not.toBeNull();
+    expect(await bucket.get(uploaded.imageKey)).toBeUndefined();
+    expect(await bucket.get(seedKey)).toBeUndefined();
+    expect(await bucket.get(shared)).toBeDefined();
   });
 
   it("deletes nothing when any id is outside the group", async () => {

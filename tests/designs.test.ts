@@ -3,8 +3,9 @@ import { migrate } from "drizzle-orm/d1/migrator";
 import { Miniflare } from "miniflare";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { connect, type Db } from "@/db";
-import { categories, designGroups, designs } from "@/db/schema";
+import { categories, designGroups, designs, media } from "@/db/schema";
 import { seedCatalog } from "@/db/seed";
+import { mediaStore, type MediaStore } from "@/lib/media";
 import { isSameOrigin } from "@/lib/auth";
 import { GroupNotFoundError, addDesign, designNumbering, isWebp, readCapped } from "@/lib/designs";
 
@@ -12,14 +13,14 @@ const webp = new Uint8Array([...new TextEncoder().encode("RIFF"), 0, 0, 0, 0, ..
 
 let mf: Miniflare;
 let db: Db;
-let bucket: R2Bucket;
+let bucket: MediaStore;
 let vcGroup: number;
 
 beforeAll(async () => {
-  mf = new Miniflare({ modules: true, script: "export default {}", d1Databases: ["DB"], r2Buckets: ["MEDIA"] });
+  mf = new Miniflare({ modules: true, script: "export default {}", d1Databases: ["DB"] });
   db = connect(await mf.getD1Database("DB"));
-  bucket = (await mf.getR2Bucket("MEDIA")) as unknown as R2Bucket;
   await migrate(db, { migrationsFolder: "drizzle" });
+  bucket = mediaStore(db);
   await seedCatalog(db);
   const [vc] = await db.select({ id: categories.id }).from(categories).where(eq(categories.slug, "visiting-cards"));
   [{ id: vcGroup }] = await db.select({ id: designGroups.id }).from(designGroups).where(eq(designGroups.categoryId, vc.id));
@@ -39,12 +40,11 @@ describe("designNumbering", () => {
 });
 
 describe("addDesign", () => {
-  it("stores the image in R2 and appends a design with the next code", async () => {
+  it("stores the image and appends a design with the next code", async () => {
     const d = await addDesign(db, bucket, vcGroup, webp);
     expect(d.code).toBe("VC-147");
     expect(d.imageKey).toMatch(/^t\/visiting-cards\/[0-9a-f-]{36}\.webp$/);
-    const obj = await bucket.get(d.imageKey);
-    expect(obj?.httpMetadata?.contentType).toBe("image/webp");
+    expect(await bucket.get(d.imageKey)).toEqual({ contentType: "image/webp", bytes: webp });
     const rows = await db.select().from(designs).where(eq(designs.groupId, vcGroup));
     const added = rows.find((r) => r.id === d.id)!;
     expect(added.sort).toBe(Math.max(...rows.filter((r) => r.id !== d.id).map((r) => r.sort)) + 1);
@@ -65,9 +65,9 @@ describe("addDesign", () => {
   });
 
   it("rejects an unknown group without writing anything", async () => {
-    const before = (await bucket.list()).objects.length;
+    const before = await db.$count(media);
     await expect(addDesign(db, bucket, 999999, webp)).rejects.toBeInstanceOf(GroupNotFoundError);
-    expect((await bucket.list()).objects.length).toBe(before);
+    expect(await db.$count(media)).toBe(before);
   });
 });
 
