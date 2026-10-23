@@ -1,6 +1,6 @@
 import { ActionForm } from "@/components/admin/action-form";
 import { IconDown, IconUp } from "@/components/admin/icons";
-import type { ActionState } from "@/app/(admin)/admin/categories/actions";
+import type { ActionState } from "@/lib/admin-action";
 
 type Action = (s: ActionState, fd: FormData) => Promise<ActionState>;
 type Hidden = Record<string, string | number>;
