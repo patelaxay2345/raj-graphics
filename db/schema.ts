@@ -16,6 +16,8 @@ export const categories = sqliteTable("categories", {
   showOnHome: integer("show_on_home", { mode: "boolean" }).notNull().default(false),
   homeSort: integer("home_sort").notNull().default(0),
   active: integer("active", { mode: "boolean" }).notNull().default(true),
+  designPrefix: text("design_prefix").notNull().default(""),
+  nextDesignNo: integer("next_design_no").notNull().default(1),
   updatedAt: updatedAt(),
 });
 
