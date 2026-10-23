@@ -33,7 +33,7 @@ export default async function CategoryPage({ params }: Params) {
           <div className="crumb"><Link href="/">Home</Link> / <Link href="/#products">Products</Link> / {c.name}</div>
           <span className="pill">✨ {c.variants.length + designs} options available</span>
           <h1>{rest.length ? <>{first} <em>{rest.join(" ")}</em></> : <em>{first}</em>}</h1>
-          <p>Premium {c.name.toLowerCase()} with a free design check and fast turnaround. Share your requirement and get a quote in minutes.</p>
+          <p>{c.description || `Premium ${c.name.toLowerCase()} with a free design check and fast turnaround. Share your requirement and get a quote in minutes.`}</p>
           <div className="ctas">
             <EnquireButton className="btn btn-p" product={c.name}>Get a Quote →</EnquireButton>
             <a className="btn btn-o" href={waLink()} target="_blank" rel="noopener">💬 Chat on WhatsApp</a>

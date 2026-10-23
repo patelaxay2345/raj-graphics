@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useRef, useState, type DragEvent } from "react";
+import { sendWebp, toWebp } from "@/lib/client-upload";
 
 const THUMB = 360;
 const PARALLEL = 4;
@@ -10,36 +11,6 @@ const MAX_SOURCE_BYTES = 25_000_000;
 const TYPES = ["image/jpeg", "image/png", "image/webp"];
 
 type Item = { id: number; file: File; state: "waiting" | "working" | "done" | "error"; pct: number; note: string };
-
-async function toWebp(file: File) {
-  const bmp = await createImageBitmap(file);
-  const scale = Math.min(1, THUMB / Math.max(bmp.width, bmp.height));
-  const canvas = document.createElement("canvas");
-  canvas.width = Math.round(bmp.width * scale);
-  canvas.height = Math.round(bmp.height * scale);
-  const ctx = canvas.getContext("2d")!;
-  ctx.imageSmoothingQuality = "high";
-  ctx.drawImage(bmp, 0, 0, canvas.width, canvas.height);
-  bmp.close();
-  const blob = await new Promise<Blob | null>((r) => canvas.toBlob(r, "image/webp", 0.8));
-  if (blob?.type !== "image/webp") throw new Error("Browser can't make WebP");
-  return blob;
-}
-
-const send = (blob: Blob, groupId: number, onProgress: (pct: number) => void) =>
-  new Promise<{ code: string }>((resolve, reject) => {
-    const x = new XMLHttpRequest();
-    x.open("POST", `/api/admin/designs?group=${groupId}`);
-    x.setRequestHeader("content-type", "image/webp");
-    x.upload.onprogress = (e) => e.lengthComputable && onProgress(Math.round((e.loaded / e.total) * 100));
-    x.onload = () => {
-      const body = (() => { try { return JSON.parse(x.responseText); } catch { return {}; } })();
-      if (x.status === 201) resolve(body);
-      else reject(new Error(body.error ?? `Upload failed (${x.status})`));
-    };
-    x.onerror = () => reject(new Error("Network error"));
-    x.send(blob);
-  });
 
 export function Uploader({ groupId, groupTitle }: { groupId: number; groupTitle: string }) {
   const router = useRouter();
@@ -58,9 +29,9 @@ export function Uploader({ groupId, groupTitle }: { groupId: number; groupTitle:
         const id = it.id;
         try {
           patch(id, { state: "working", note: "Resizing" });
-          const blob = await toWebp(it.file);
+          const blob = await toWebp(it.file, THUMB);
           patch(id, { note: "Uploading" });
-          const { code } = await send(blob, groupId, (pct) => patch(id, { pct }));
+          const { code } = await sendWebp<{ code: string }>(`/api/admin/designs?group=${groupId}`, blob, (pct) => patch(id, { pct }));
           patch(id, { state: "done", pct: 100, note: code });
         } catch (e) {
           patch(id, { state: "error", note: e instanceof Error ? e.message : "Failed" });
