@@ -1,5 +1,5 @@
 import { relations, sql } from "drizzle-orm";
-import { index, integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
+import { index, integer, sqliteTable, text, uniqueIndex } from "drizzle-orm/sqlite-core";
 
 const updatedAt = () => integer("updated_at", { mode: "timestamp" }).notNull().default(sql`(unixepoch())`);
 
@@ -135,11 +135,87 @@ export const counters = sqliteTable("counters", {
   next: integer("next").notNull(),
 });
 
+export const settings = sqliteTable("settings", {
+  key: text("key").primaryKey(),
+  value: text("value", { mode: "json" }).notNull(),
+  updatedAt: updatedAt(),
+});
+
+export type Seller = {
+  legalName: string;
+  gstin: string;
+  pan: string;
+  stateCode: string;
+  address: string;
+  phone: string;
+  email: string;
+  bankName: string;
+  account: string;
+  ifsc: string;
+  upi: string;
+  terms: string;
+};
+
+export const invoices = sqliteTable(
+  "invoices",
+  {
+    id: integer("id").primaryKey({ autoIncrement: true }),
+    orderId: integer("order_id").notNull().references(() => orders.id),
+    status: text("status", { enum: ["draft", "issued", "paid"] }).notNull().default("draft"),
+    fy: text("fy"),
+    seq: integer("seq"),
+    issuedOn: text("issued_on"),
+    billName: text("bill_name").notNull(),
+    billGstin: text("bill_gstin").notNull().default(""),
+    billAddress: text("bill_address").notNull().default(""),
+    placeOfSupply: text("place_of_supply").notNull(),
+    seller: text("seller", { mode: "json" }).$type<Seller>(),
+    gstRate: integer("gst_rate").notNull(),
+    taxable: integer("taxable").notNull(),
+    cgst: integer("cgst").notNull(),
+    sgst: integer("sgst").notNull(),
+    igst: integer("igst").notNull(),
+    roundOff: integer("round_off").notNull(),
+    total: integer("total").notNull(),
+    advance: integer("advance").notNull().default(0),
+    note: text("note").notNull().default(""),
+    createdAt: createdAt(),
+    paidAt: integer("paid_at", { mode: "timestamp" }),
+    updatedAt: updatedAt(),
+  },
+  (t) => [uniqueIndex("invoices_fy_seq").on(t.fy, t.seq), uniqueIndex("invoices_order").on(t.orderId), index("invoices_status").on(t.status)],
+);
+
+export const invoiceItems = sqliteTable(
+  "invoice_items",
+  {
+    id: integer("id").primaryKey({ autoIncrement: true }),
+    invoiceId: integer("invoice_id").notNull().references(() => invoices.id, { onDelete: "cascade" }),
+    description: text("description").notNull(),
+    hsn: text("hsn").notNull().default(""),
+    qty: integer("qty").notNull(),
+    unit: text("unit").notNull(),
+    rate: integer("rate").notNull(),
+    sort: integer("sort").notNull().default(0),
+  },
+  (t) => [index("invoice_items_invoice_sort").on(t.invoiceId, t.sort)],
+);
+
+export const invoicesRelations = relations(invoices, ({ one, many }) => ({
+  order: one(orders, { fields: [invoices.orderId], references: [orders.id] }),
+  items: many(invoiceItems),
+}));
+
+export const invoiceItemsRelations = relations(invoiceItems, ({ one }) => ({
+  invoice: one(invoices, { fields: [invoiceItems.invoiceId], references: [invoices.id] }),
+}));
+
 export const customersRelations = relations(customers, ({ many }) => ({ orders: many(orders) }));
 
 export const ordersRelations = relations(orders, ({ one, many }) => ({
   customer: one(customers, { fields: [orders.customerId], references: [customers.id] }),
   items: many(orderItems),
+  invoices: many(invoices),
 }));
 
 export const orderItemsRelations = relations(orderItems, ({ one }) => ({

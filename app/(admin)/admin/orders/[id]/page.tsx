@@ -9,6 +9,8 @@ import { getDb } from "@/db";
 import { getOrder } from "@/lib/admin-orders";
 import { orderMessage, orderNo, showPhone, toRupees } from "@/lib/order-format";
 import { setOrderStatusAction } from "../actions";
+import { createInvoiceAction } from "../../invoices/actions";
+import { invoiceLabel } from "@/lib/admin-invoices";
 
 const stamp = (d: Date) => d.toLocaleString("en-IN", { day: "numeric", month: "short", hour: "numeric", minute: "2-digit", timeZone: "Asia/Kolkata" });
 
@@ -33,6 +35,14 @@ export default async function OrderPage({ params }: { params: Promise<{ id: stri
             <span className="sub">{done && o.doneAt ? `Done ${stamp(o.doneAt)}` : `Placed ${stamp(o.createdAt)}`}</span>
           </span>
           <span className="acts">
+            {o.invoices[0] ? (
+              <Link className="btn btn-o btn-sm" href={`/admin/invoices/${o.invoices[0].id}`}>Invoice {invoiceLabel(o.invoices[0]) ?? "draft"}</Link>
+            ) : (
+              <ActionForm action={createInvoiceAction}>
+                <HiddenFields orderId={o.id} />
+                <button className="btn btn-o btn-sm">Create invoice</button>
+              </ActionForm>
+            )}
             <a className="btn btn-o btn-sm" href={orderMessage(o, done ? "done" : "placed")} target="_blank" rel="noopener"><IconChat />{done ? "Send ready message" : "Send order summary"}</a>
             <ActionForm action={setOrderStatusAction}>
               <HiddenFields id={o.id} on={String(!done)} />

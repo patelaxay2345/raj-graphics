@@ -7,6 +7,7 @@ import { getDb } from "@/db";
 import { LIST_LIMIT, istToday, listOrders, orderStats, type OrderTab } from "@/lib/admin-orders";
 import { inr, jobSummary, orderNo, payState } from "@/lib/order-format";
 import { setOrderStatusAction } from "./actions";
+import { invoiceLabel } from "@/lib/admin-invoices";
 
 const TABS: [OrderTab, string][] = [["pending", "Pending"], ["unpaid", "Balance due"], ["done", "Done"], ["all", "All"]];
 const PAY = { paid: ["b-won", "Paid"], advance: ["b-quoted", "Advance"], unpaid: ["b-due", "Unpaid"] } as const;
@@ -59,7 +60,7 @@ export default async function OrdersPage({ searchParams }: { searchParams: Promi
           {rows.length ? (
             <div className="tbl-wrap">
               <table className="tbl">
-                <thead><tr><th>Order</th><th>Customer</th><th>Job</th><th className="r">Qty</th><th>Due</th><th>Status</th><th>Payment</th><th className="r">Amount</th></tr></thead>
+                <thead><tr><th>Order</th><th>Customer</th><th>Job</th><th className="r">Qty</th><th>Due</th><th>Status</th><th>Payment</th><th className="r">Amount</th><th>Invoice</th></tr></thead>
                 <tbody>
                   {rows.map((o) => {
                     const [first] = o.items;
@@ -85,6 +86,7 @@ export default async function OrdersPage({ searchParams }: { searchParams: Promi
                         </td>
                         <td><span className={`b ${payCls}`}>{payLabel}{payState(o.total, o.advance) === "advance" && ` ${inr(o.advance)}`}</span></td>
                         <td className="r mono">{inr(o.total)}</td>
+                        <td>{o.invoices[0] ? <Link className="mono" href={`/admin/invoices/${o.invoices[0].id}`}>{invoiceLabel(o.invoices[0]) ?? "Draft"}</Link> : <Link className="sub" href={`/admin/orders/${o.id}`}>—</Link>}</td>
                       </tr>
                     );
                   })}

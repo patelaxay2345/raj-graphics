@@ -180,4 +180,13 @@ button.chip{cursor:pointer;font:inherit;font-size:12.5px;font-weight:500}
 .form-foot.col{flex-direction:column;align-items:stretch;border-top:1px solid var(--line-2)}
 .status-bar{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:8px;padding:8px 12px}
 .status-bar .acts{gap:8px}
+.b-lost{background:#f4f4f5;color:#52525b;border-color:#dfe0ea}.b-lost i{background:#a1a1aa}
+.head h1 .b{vertical-align:middle;margin-left:4px}
+.acts.gap{gap:8px}
+.note.warn{background:#fffbeb;border-color:#fde68a;color:#92400e}
+.inv-split>.col-main{flex-basis:420px}
+.inv-split>.col-side.inv-preview{flex:999 1 560px;position:sticky;top:12px}
+.inv-wrap{display:flex}
+.line-row{align-items:flex-end}
+.line-row .icon-btn{margin-bottom:2px}
 @media (max-width:760px){.side{max-width:none;flex-basis:100%}.main{padding:14px 16px}.top{padding:0 16px}}

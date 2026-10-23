@@ -1,0 +1,33 @@
+.inv-doc{background:#fff;color:#141632;font-size:12px;line-height:1.45;padding:28px 30px;border:1px solid #e6e7f0;border-radius:6px;max-width:794px;width:100%;box-sizing:border-box}
+.inv-doc table{border-collapse:collapse}
+.inv-doc .r{text-align:right;font-variant-numeric:tabular-nums}
+.inv-mono{font-family:var(--font-geist-mono),ui-monospace,monospace;font-size:11px}
+.inv-k{display:block;font-size:10.5px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:#71717a;margin-top:8px}
+.inv-k:first-child{margin-top:0}
+.inv-top{display:flex;justify-content:space-between;gap:16px;padding-bottom:14px;border-bottom:2px solid #2b2d8f}
+.inv-brand{display:flex;gap:12px;align-items:flex-start}
+.inv-brand img{width:44px;height:44px;object-fit:contain}
+.inv-brand b{font-size:16px;letter-spacing:.02em;text-transform:uppercase;color:#2b2d8f}
+.inv-title{text-align:right;display:flex;flex-direction:column}
+.inv-title b{font-size:15px;letter-spacing:.08em;color:#e6157f}
+.inv-title span{font-size:10.5px;color:#71717a}
+.inv-parties{display:flex;justify-content:space-between;gap:16px;padding:14px 0}
+.inv-parties b{font-size:13px}
+.inv-parties table td{padding:1px 0 1px 14px}
+.inv-parties table td:first-child{color:#71717a;padding-left:0}
+.inv-lines{width:100%}
+.inv-lines th{background:#f4f4fb;font-size:10.5px;text-transform:uppercase;letter-spacing:.04em;color:#52525b;text-align:left;padding:6px 8px}
+.inv-lines td{padding:7px 8px;border-bottom:1px solid #f0f0f1;vertical-align:top}
+.inv-lines th.r,.inv-lines td.r{white-space:nowrap}
+.inv-sum{display:flex;justify-content:space-between;gap:20px;padding-top:12px}
+.inv-sum>div{flex:1;min-width:0}
+.inv-sum table{min-width:250px}
+.inv-sum td{padding:3px 0}
+.inv-sum td.r{padding-left:20px}
+.inv-total td{font-weight:700;border-top:1px solid #e6e7f0;padding-top:6px}
+.inv-foot{display:flex;justify-content:space-between;align-items:flex-end;gap:20px;margin-top:26px;padding-top:12px;border-top:1px solid #f0f0f1}
+.inv-terms{white-space:pre-line;font-size:10.5px;color:#52525b;flex:1}
+.inv-sign{text-align:right;font-size:11px}
+.inv-sign div{height:40px}
+@media (max-width:640px){.inv-doc{padding:16px}.inv-top,.inv-parties,.inv-sum,.inv-foot{flex-direction:column}.inv-title,.inv-sign{text-align:left}.inv-sum table{min-width:0;width:100%}}
+@media print{.inv-doc{border:0;border-radius:0;padding:0;max-width:none}}

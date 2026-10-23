@@ -4,16 +4,19 @@ import { z } from "zod";
 import type { Db } from "@/db";
 import { counters, customers, orderItems, orders } from "@/db/schema";
 import { AdminError } from "@/lib/admin-categories";
+import { GSTIN_RE } from "@/lib/gst";
 import { DELIVERY, DESIGN_BY, GST_RATES, PAY_MODES, PROOF_BY, SERVICES, UNITS, normalizePhone, toPaise, totals, type ServiceId } from "@/lib/order-format";
 
 const text = (maxLen: number) => z.string().trim().max(maxLen);
 const keys = <T extends readonly (readonly [string, string])[]>(list: T) => list.map(([k]) => k) as [T[number][0], ...T[number][0][]];
-const money = (label: string, max: number) =>
+export const money = (label: string, max: number) =>
   z.string().transform((v, ctx) => {
     const p = v.trim() === "" ? 0 : toPaise(v);
     if (p === null || p > max) ctx.addIssue({ code: "custom", message: `${label}: enter rupees, e.g. 650 or 0.65` });
     return p ?? 0;
   });
+
+export const gstinSchema = z.string().trim().toUpperCase().refine((v) => v === "" || GSTIN_RE.test(v), "GSTIN should be 15 characters, e.g. 24ABCDE1234F1Z5");
 
 const customerSchema = z.object({
   phone: z.string().transform((v, ctx) => {
@@ -23,7 +26,7 @@ const customerSchema = z.object({
   }),
   name: text(80).min(1, "Customer name is required"),
   business: text(120),
-  gstin: text(15).toUpperCase().regex(/^$|^\d{2}[A-Z]{5}\d{4}[A-Z][A-Z\d]Z[A-Z\d]$/, "GSTIN should be 15 characters, e.g. 24ABCDE1234F1Z5"),
+  gstin: gstinSchema,
   city: text(60),
   address: text(300),
 });
@@ -137,7 +140,7 @@ export const findCustomer = async (db: Db, phone: string) => {
 export const getOrder = (db: Db, id: number) =>
   db.query.orders.findFirst({
     where: eq(orders.id, id),
-    with: { customer: true, items: { orderBy: (t, { asc }) => [asc(t.sort), asc(t.id)] } },
+    with: { customer: true, items: { orderBy: (t, { asc }) => [asc(t.sort), asc(t.id)] }, invoices: { columns: { id: true, fy: true, seq: true } } },
   });
 
 export type OrderTab = "pending" | "unpaid" | "done" | "all";
@@ -196,7 +199,7 @@ export function listOrders(db: Db, tab: OrderTab, q: string) {
 
   return db.query.orders.findMany({
     where: and(TAB[tab], search),
-    with: { customer: true, items: { orderBy: (t, { asc }) => [asc(t.sort), asc(t.id)] } },
+    with: { customer: true, items: { orderBy: (t, { asc }) => [asc(t.sort), asc(t.id)] }, invoices: { columns: { id: true, fy: true, seq: true } } },
     orderBy: desc(orders.no),
     limit: LIST_LIMIT,
   });
