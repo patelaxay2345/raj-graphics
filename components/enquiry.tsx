@@ -1,13 +1,15 @@
 "use client";
 
-import { createContext, useContext, useRef, useState, type FormEvent, type MouseEvent, type ReactNode } from "react";
+import { createContext, startTransition, useActionState, useContext, useEffect, useEffectEvent, useRef, useState, type FormEvent, type MouseEvent, type ReactNode } from "react";
+import { submitEnquiry } from "@/app/(site)/actions";
+import { Turnstile } from "@/components/turnstile";
 import { img, waLink } from "@/lib/site";
 
 type Enquiry = { product: string; image?: string };
 
-const EnquiryContext = createContext<{ open: (e: Enquiry) => void; names: string[] }>({ open: () => {}, names: [] });
+const EnquiryContext = createContext<{ open: (e: Enquiry) => void; names: string[]; siteKey: string | null }>({ open: () => {}, names: [], siteKey: null });
 
-export function EnquiryProvider({ names, children }: { names: string[]; children: ReactNode }) {
+export function EnquiryProvider({ names, siteKey, children }: { names: string[]; siteKey: string | null; children: ReactNode }) {
   const dlg = useRef<HTMLDialogElement>(null);
   const [state, setState] = useState<Enquiry & { n: number }>({ product: "", n: 0 });
 
@@ -18,7 +20,7 @@ export function EnquiryProvider({ names, children }: { names: string[]; children
   const close = () => dlg.current?.close();
 
   return (
-    <EnquiryContext.Provider value={{ open, names }}>
+    <EnquiryContext.Provider value={{ open, names, siteKey }}>
       {children}
       <dialog ref={dlg} onClick={(e) => e.target === dlg.current && close()}>
         <div className="mh">
@@ -53,15 +55,25 @@ const formText = (f: HTMLFormElement) => {
   return `Hi Raj Graphics, I need a quote.\nName: ${d.name}\nProduct: ${d.product}\nQty: ${d.qty}\nCity: ${d.city}\n${d.msg}`;
 };
 
-export function EnquiryForm({ product = "", onSent }: { product?: string; onSent?: () => void }) {
-  const { names } = useContext(EnquiryContext);
-  const [sent, setSent] = useState(false);
+export function EnquiryForm({ product = "", source = "quote", onSent }: { product?: string; source?: "quote" | "contact"; onSent?: () => void }) {
+  const { names, siteKey } = useContext(EnquiryContext);
+  const [state, dispatch, pending] = useActionState(submitEnquiry, {});
+  const form = useRef<HTMLFormElement>(null);
   const match = product ? names.find((n) => product.startsWith(n)) : undefined;
 
-  const submit = (e: FormEvent) => {
-    e.preventDefault();
-    setSent(true);
+  const sent = useEffectEvent(() => {
+    form.current?.reset();
     onSent?.();
+  });
+
+  useEffect(() => {
+    if (state.ok) sent();
+  }, [state.ok]);
+
+  const submit = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const fd = new FormData(e.currentTarget);
+    startTransition(() => dispatch(fd));
   };
   const whatsapp = (e: MouseEvent<HTMLButtonElement>) => {
     const f = e.currentTarget.form!;
@@ -69,8 +81,10 @@ export function EnquiryForm({ product = "", onSent }: { product?: string; onSent
   };
 
   return (
-    <form onSubmit={submit}>
-      <label className="f">Name<input required name="name" placeholder="Your name" /></label>
+    <form ref={form} onSubmit={submit} aria-busy={pending}>
+      <input type="hidden" name="source" value={source} />
+      <label className="hp" aria-hidden="true">Website<input name="website" tabIndex={-1} autoComplete="off" /></label>
+      <label className="f">Name<input required name="name" maxLength={80} placeholder="Your name" /></label>
       <label className="f">Mobile<input required name="phone" type="tel" pattern="[0-9+ ]{10,14}" placeholder="10-digit mobile" /></label>
       <label className="f full">Product
         <select name="product" defaultValue={match ?? product}>
@@ -79,14 +93,16 @@ export function EnquiryForm({ product = "", onSent }: { product?: string; onSent
           {product && !match && <option>{product}</option>}
         </select>
       </label>
-      <label className="f">Quantity<input name="qty" placeholder="e.g. 1000" /></label>
-      <label className="f">City<input name="city" placeholder="Delivery city" /></label>
-      <label className="f full">Details<textarea name="msg" rows={3} placeholder="Size, finish, design ready or not…" defaultValue={product ? `Interested in: ${product}` : ""} /></label>
+      <label className="f">Quantity<input name="qty" maxLength={40} placeholder="e.g. 1000" /></label>
+      <label className="f">City<input name="city" maxLength={60} placeholder="Delivery city" /></label>
+      <label className="f full">Details<textarea name="msg" rows={3} maxLength={2000} placeholder="Size, finish, design ready or not…" defaultValue={product ? `Interested in: ${product}` : ""} /></label>
+      {siteKey && <Turnstile key={state.n ?? 0} siteKey={siteKey} />}
       <div className="acts">
-        <button className="btn btn-p" type="submit" disabled={sent}>Send enquiry</button>
+        <button className="btn btn-p" type="submit" disabled={pending || state.ok}>{pending ? "Sending…" : "Send enquiry"}</button>
         <button className="btn btn-wa" type="button" onClick={whatsapp}>WhatsApp</button>
       </div>
-      <div className={sent ? "ok show" : "ok"}>✓ Thanks! We&apos;ll call you back shortly.</div>
+      {state.error && <div className="err show" role="alert">{state.error}</div>}
+      <div className={state.ok ? "ok show" : "ok"} role="status">✓ Thanks! We&apos;ll call you back shortly.</div>
     </form>
   );
 }

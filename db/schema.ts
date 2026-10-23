@@ -257,6 +257,25 @@ export const invoiceItemsRelations = relations(invoiceItems, ({ one }) => ({
   invoice: one(invoices, { fields: [invoiceItems.invoiceId], references: [invoices.id] }),
 }));
 
+export const enquiries = sqliteTable(
+  "enquiries",
+  {
+    id: integer("id").primaryKey({ autoIncrement: true }),
+    source: text("source", { enum: ["quote", "contact"] }).notNull(),
+    name: text("name").notNull(),
+    phone: text("phone").notNull(),
+    product: text("product").notNull().default(""),
+    qty: text("qty").notNull().default(""),
+    city: text("city").notNull().default(""),
+    message: text("message").notNull().default(""),
+    status: text("status", { enum: ["new", "quoted", "won", "lost"] }).notNull().default("new"),
+    notes: text("notes").notNull().default(""),
+    createdAt: createdAt(),
+    updatedAt: updatedAt(),
+  },
+  (t) => [index("enquiries_status_created").on(t.status, t.createdAt), index("enquiries_phone_created").on(t.phone, t.createdAt)],
+);
+
 export const customersRelations = relations(customers, ({ many }) => ({ orders: many(orders) }));
 
 export const ordersRelations = relations(orders, ({ one, many }) => ({

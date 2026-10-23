@@ -36,6 +36,13 @@
       "when": 1792790179259,
       "tag": "0004_challans",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "6",
+      "when": 1792791894515,
+      "tag": "0005_enquiries",
+      "breakpoints": true
     }
   ]
 }
